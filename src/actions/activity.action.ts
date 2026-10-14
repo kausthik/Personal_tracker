@@ -15,11 +15,15 @@ export interface DayActivity {
   isPerfectDay: boolean; // met DAILY_REVISION_GOAL
 }
 
+export interface Streak {
+  current: number;
+  best: number;
+}
+
 export interface ActivityHistoryResponse {
   days: DayActivity[];
-  currentStreak: number;
-  maxStreak: number;
-  totalActiveDays: number;
+  revisionStreak: Streak;
+  studyStreak: Streak;
   perfectDaysCount: number;
   todayRevisions: number;
   todayStudies: number;
@@ -105,50 +109,36 @@ export async function getStudyActivityHistoryAction(
     current.setDate(current.getDate() + 1);
   }
 
-  // Calculate streaks
-  let maxStreak = 0;
-  let tempStreak = 0;
-  let totalActiveDays = 0;
-  let perfectDaysCount = 0;
-
-  for (const d of days) {
-    const isActive = d.revisions > 0 || d.studies > 0;
-    if (isActive) {
-      totalActiveDays++;
-      tempStreak++;
-      if (tempStreak > maxStreak) {
-        maxStreak = tempStreak;
-      }
-    } else {
-      tempStreak = 0;
-    }
-
-    if (d.isPerfectDay) {
-      perfectDaysCount++;
-    }
-  }
-
-  // Current streak counts back from today; if today has no activity yet, it continues from yesterday
-  let currentStreak = 0;
-  const lastIndex = days.length - 1;
-  const isTodayActive =
-    lastIndex >= 0 && (days[lastIndex].revisions > 0 || days[lastIndex].studies > 0);
-
-  for (let i = isTodayActive ? lastIndex : lastIndex - 1; i >= 0; i--) {
-    if (days[i].revisions > 0 || days[i].studies > 0) {
-      currentStreak++;
-    } else {
-      break;
-    }
-  }
+  const perfectDaysCount = days.filter((d) => d.isPerfectDay).length;
 
   return {
     days,
-    currentStreak,
-    maxStreak,
-    totalActiveDays,
+    revisionStreak: computeStreak(days, (d) => d.revisions > 0),
+    studyStreak: computeStreak(days, (d) => d.studies > 0),
     perfectDaysCount,
     todayRevisions: revisionCountMap.get(todayKey) || 0,
     todayStudies: studyCountMap.get(todayKey) || 0,
   };
+}
+
+// Best run of active days, plus the run ending today (or yesterday, if today has no activity yet)
+function computeStreak(
+  days: DayActivity[],
+  isActive: (day: DayActivity) => boolean
+): Streak {
+  let best = 0;
+  let run = 0;
+  for (const day of days) {
+    run = isActive(day) ? run + 1 : 0;
+    best = Math.max(best, run);
+  }
+
+  let current = 0;
+  const last = days.length - 1;
+  const start = last >= 0 && isActive(days[last]) ? last : last - 1;
+  for (let i = start; i >= 0 && isActive(days[i]); i--) {
+    current++;
+  }
+
+  return { current, best };
 }

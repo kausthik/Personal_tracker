@@ -7,77 +7,52 @@ import StreakSection from "@/src/components/study-tracker/dashboard/streak-secti
 import { getTodayRevisions } from "@/src/lib/server/revision";
 import { getTodayStudies } from "@/src/lib/server/study";
 import { getStudyActivityHistoryAction } from "@/src/actions/activity.action";
+import { auth } from "@/src/lib/auth";
 import Link from "next/link";
 import { plannerRoute } from "@/lib/routes";
-import { Compass, ArrowRight, BookMarked } from "lucide-react";
+import { ArrowRight, Map as MapIcon } from "lucide-react";
 
 export default async function Page() {
-  const [studies, revisions, activity] = await Promise.all([
+  const [session, studies, revisions, activity] = await Promise.all([
+    auth(),
     getTodayStudies(),
     getTodayRevisions(),
-    getStudyActivityHistoryAction(70), // 10 weeks of LeetCode-style activity
+    getStudyActivityHistoryAction(119), // 17 weeks of history
   ]);
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-background text-foreground pb-16 overflow-hidden">
-      {/* Premium 3-color ambient background glows (Neutral, Emerald, Orange) */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-emerald-500/10 via-orange-500/5 to-transparent blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -left-48 -z-10 h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 -right-48 -z-10 h-96 w-96 rounded-full bg-orange-500/5 blur-3xl" />
+    <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 text-foreground">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+        <DashboardHeader name={session?.user?.name} activity={activity} />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-        {/* Header Hero */}
-        <DashboardHeader />
-
-        {/* 5-Card Analytics Strip */}
         <StatsSection />
 
-        {/* LeetCode-style Streak Heatmap Section */}
         <StreakSection activity={activity} />
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Top 5 Today's Revisions (least date first) & Today's Studies */}
-          <div className="lg:col-span-7 space-y-8">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+          <div className="space-y-6 lg:col-span-7">
             <RevisionCard revisions={revisions} />
             <StudiedTopicsCard studies={studies} />
           </div>
 
-          {/* Right Column: Important Dates & Study Roadmaps */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className="space-y-6 lg:col-span-5">
             <ImportantDatesCard />
 
-            {/* Quick Roadmap Planners Callout Card */}
-            <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/70 p-6 backdrop-blur-xl shadow-xs space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
-                  <BookMarked className="size-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-base text-foreground">
-                    Study Roadmaps & Planners
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Organize sheets like Striver A2Z DSA, OS, and System Design.
-                  </p>
-                </div>
+            <Link
+              href={plannerRoute}
+              className="group flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-colors hover:border-emerald-500/40 hover:bg-emerald-500/3"
+            >
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <MapIcon className="size-5" />
               </div>
-
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Break complex topics into ordered task checklists and track completion percentages as you advance.
-              </p>
-
-              <Link
-                href={plannerRoute}
-                className="group flex w-full items-center justify-between rounded-xl bg-orange-500 hover:bg-orange-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all"
-              >
-                <div className="flex items-center gap-2">
-                  <Compass className="size-4" />
-                  <span>Explore Roadmaps</span>
-                </div>
-                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold">Study roadmaps</p>
+                <p className="text-xs text-muted-foreground">
+                  Work through sheets like Striver A2Z, OS and System Design topic by topic.
+                </p>
+              </div>
+              <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
+            </Link>
           </div>
         </div>
       </div>

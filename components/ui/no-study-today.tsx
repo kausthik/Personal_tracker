@@ -8,9 +8,9 @@ export default function NoStudyToday() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center text-center p-8 sm:p-12 min-h-[380px] rounded-xl border border-dashed border-border/80 bg-card/40 space-y-4">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-muted/60 text-muted-foreground shadow-xs">
-        <BookOpen className="size-7" />
+    <div className="flex flex-col items-center justify-center text-center px-6 py-10 rounded-xl border border-dashed border-border/70 bg-muted/20 space-y-4">
+      <div className="flex size-12 items-center justify-center rounded-2xl bg-muted/60 text-muted-foreground">
+        <BookOpen className="size-6" />
       </div>
 
       <div className="space-y-1 max-w-sm">

@@ -88,8 +88,8 @@ export default function CompleteTaskDialog({
       onOpenChange={setOpen}
     >
       <DialogTrigger asChild>
-        <Button size="sm">
-          Complete
+        <Button size="sm" variant="outline" className="h-8 shrink-0 rounded-lg text-xs">
+          Mark done
         </Button>
       </DialogTrigger>
 

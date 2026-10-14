@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteStudyAction } from "@/src/actions/study.action";
 import { toast } from "sonner";
@@ -19,6 +19,12 @@ const difficultyStyles = {
   Easy: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
   Medium: "bg-muted/60 text-muted-foreground border-border/80",
   Hard: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20",
+};
+
+const difficultyDot = {
+  Easy: "bg-emerald-500",
+  Medium: "bg-muted-foreground/50",
+  Hard: "bg-orange-500",
 };
 
 export default function StudiedTopicItem({
@@ -41,42 +47,32 @@ export default function StudiedTopicItem({
   };
 
   return (
-    <div className="group flex items-center justify-between rounded-xl border border-border/70 bg-card/50 p-3.5 transition-all hover:bg-muted/40 hover:border-border">
-      <div className="flex items-center gap-3.5 min-w-0">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-          <BookOpen className="size-4" />
-        </div>
+    <div className="group flex items-center gap-3.5 rounded-xl px-3.5 py-3 transition-colors hover:bg-muted/50">
+      <span className={`size-2 shrink-0 rounded-full ${difficultyDot[difficulty] ?? difficultyDot.Medium}`} />
 
-        <div className="min-w-0">
-          <h4 className="font-semibold text-foreground text-sm truncate">
-            {title}
-          </h4>
-
-          <p className="text-xs text-muted-foreground truncate">
-            {subject}
-          </p>
-        </div>
+      <div className="min-w-0 flex-1">
+        <h4 className="truncate text-sm font-medium text-foreground">{title}</h4>
+        <p className="truncate text-xs text-muted-foreground">{subject}</p>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
-        <Badge
-          variant="outline"
-          className={`text-xs font-semibold ${difficultyStyles[difficulty] || difficultyStyles.Medium}`}
-        >
-          {difficulty}
-        </Badge>
+      <Badge
+        variant="outline"
+        className={`shrink-0 text-[11px] font-medium ${difficultyStyles[difficulty] || difficultyStyles.Medium}`}
+      >
+        {difficulty}
+      </Badge>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled={isPending}
-          onClick={handleDelete}
-          className="size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-          title="Delete study log"
-        >
-          <Trash2 className="size-4" />
-        </Button>
-      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        disabled={isPending}
+        onClick={handleDelete}
+        className="size-8 shrink-0 text-muted-foreground opacity-60 transition hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+        title="Delete study log"
+        aria-label={`Delete ${title}`}
+      >
+        <Trash2 className="size-4" />
+      </Button>
     </div>
   );
 }

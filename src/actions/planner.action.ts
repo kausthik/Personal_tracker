@@ -65,7 +65,10 @@ export async function getPlannerByIdAction(
     throw new Error("Unauthorized");
   }
 
-  return plannerService.getPlannerById(id);
+  const planner = await plannerService.getPlannerById(id);
+
+  // Only the owner may see a planner
+  return planner?.userId === session.user.id ? planner : null;
 }
 
 export async function deletePlannerAction(
@@ -129,6 +132,12 @@ export async function getPlannerTasksAction(
 
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
+  }
+
+  const planner = await plannerService.getPlannerById(plannerId);
+
+  if (planner?.userId !== session.user.id) {
+    throw new Error("Planner not found");
   }
 
   return plannerService.getPlannerTasks(

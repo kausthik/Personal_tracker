@@ -55,3 +55,8 @@ export function getRelativeDate(date: Date) {
     year: "numeric",
   });
 }
+
+// Whole days from now until `date` (negative once it has passed)
+export function daysUntil(date: Date) {
+  return Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+}

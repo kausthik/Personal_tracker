@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import {
   Dialog,
   DialogClose,
@@ -53,8 +54,9 @@ export function RegisterStudiedTopic() {
   return (
     <Dialog>
   <DialogTrigger asChild>
-    <Button>
-      Add Topic
+    <Button className="gap-2">
+      <Plus className="size-4" />
+      Log study
     </Button>
   </DialogTrigger>
 

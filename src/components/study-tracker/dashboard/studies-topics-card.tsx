@@ -8,7 +8,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import StudiedTopicItem from "./studied-topic-item";
-import { RegisterStudiedTopic } from "./study/add-topic-dialog";
 import { getTodayStudies } from "@/src/lib/server/study";
 import NoStudyToday from "@/components/ui/no-study-today";
 import { Button } from "@/components/ui/button";
@@ -26,53 +25,53 @@ export default function StudiedTopicsCard({
   const router = useRouter();
 
   return (
-    <Card className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
+    <Card className="gap-0 rounded-2xl border border-border/70 bg-card py-0 shadow-xs ring-0">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 px-5 pt-5 pb-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-            <BookOpenCheck className="size-5" />
+          <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <BookOpenCheck className="size-[18px]" />
           </div>
-
           <div>
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-lg font-bold">Studied Topics</CardTitle>
-              <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                {studies.length} Logged
-              </span>
-            </div>
+            <CardTitle className="text-base font-semibold">
+              Studied today
+              {studies.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-muted-foreground tabular-nums">
+                  {studies.length}
+                </span>
+              )}
+            </CardTitle>
             <CardDescription className="text-xs">
-              Topics and lessons completed today.
+              Each topic is scheduled for spaced revision.
             </CardDescription>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push(plannerRoute)}
-            className="text-xs font-medium gap-1.5 h-8 rounded-lg"
-          >
-            <Compass className="size-3.5 text-muted-foreground" />
-            <span>Planners</span>
-          </Button>
-          <RegisterStudiedTopic />
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push(plannerRoute)}
+          className="h-8 gap-1.5 rounded-lg text-xs text-muted-foreground"
+        >
+          <Compass className="size-3.5" />
+          <span className="hidden sm:inline">Planners</span>
+        </Button>
       </CardHeader>
 
-      <CardContent className="pt-4 space-y-2.5">
+      <CardContent className="px-3 pb-3 sm:px-4 sm:pb-4">
         {studies.length === 0 ? (
           <NoStudyToday />
         ) : (
-          studies.map((study) => (
-            <StudiedTopicItem
-              key={study._id}
-              id={study._id}
-              subject={study.subject}
-              title={study.title}
-              difficulty={study.difficulty}
-            />
-          ))
+          <div className="space-y-1.5">
+            {studies.map((study) => (
+              <StudiedTopicItem
+                key={study._id}
+                id={study._id}
+                subject={study.subject}
+                title={study.title}
+                difficulty={study.difficulty}
+              />
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>

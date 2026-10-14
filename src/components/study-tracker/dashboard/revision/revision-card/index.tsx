@@ -5,12 +5,11 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import RevisionItem from "../revision-item";
 import { getTodayRevisions } from "@/src/lib/server/revision";
 import NoRevisionsLeft from "@/components/ui/no-revision-left";
 import { todaysCompletedRevisionCount } from "@/src/actions/revision.action";
-import { RotateCcw, Target } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { DAILY_REVISION_GOAL } from "@/src/lib/revision.utils";
 
 type RevisionCardProps = {
@@ -25,43 +24,46 @@ export default async function RevisionCard({
   // Repository already returns the earliest-scheduled revisions, capped at the daily goal
   const displayRevisions = revisions.slice(0, DAILY_REVISION_GOAL);
 
+  const goalProgress = Math.min((revisionCount / DAILY_REVISION_GOAL) * 100, 100);
+  const goalMet = revisionCount >= DAILY_REVISION_GOAL;
+
   return (
-    <Card className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-            <RotateCcw className="size-5" />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-lg font-bold">Today's Revisions</CardTitle>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                <Target className="size-3" />
-                <span>{displayRevisions.length} of {DAILY_REVISION_GOAL} Daily Focus</span>
-              </span>
+    <Card className="gap-0 rounded-2xl border border-border/70 bg-card py-0 shadow-xs ring-0">
+      <CardHeader className="space-y-3 px-5 pt-5 pb-4 sm:px-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400">
+              <RotateCcw className="size-[18px]" />
             </div>
-            <CardDescription className="text-xs">
-              Showing top {DAILY_REVISION_GOAL} revisions sorted by earliest scheduled date first.
-            </CardDescription>
+            <div>
+              <CardTitle className="text-base font-semibold">Today&apos;s revisions</CardTitle>
+              <CardDescription className="text-xs">
+                Earliest due first · finish {DAILY_REVISION_GOAL} to light today&apos;s square
+              </CardDescription>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/40 border border-border/60 rounded-lg px-2.5 py-1.5">
-          <span>Completed Today:</span>
           <span
-            className={`font-bold ${
-              revisionCount >= DAILY_REVISION_GOAL ? "text-orange-500" : "text-emerald-500"
+            className={`shrink-0 text-sm font-semibold tabular-nums ${
+              goalMet ? "text-orange-600 dark:text-orange-400" : "text-foreground"
             }`}
           >
-            {revisionCount} / {DAILY_REVISION_GOAL}
+            {revisionCount}
+            <span className="font-normal text-muted-foreground">/{DAILY_REVISION_GOAL}</span>
           </span>
+        </div>
+
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${goalMet ? "bg-orange-500" : "bg-emerald-500"}`}
+            style={{ width: `${goalProgress}%` }}
+          />
         </div>
       </CardHeader>
 
-      <CardContent className="pt-4">
+      <CardContent className="px-3 pb-3 sm:px-4 sm:pb-4">
         {displayRevisions.length !== 0 ? (
-          <ScrollArea className="max-h-[440px] pr-3 space-y-2.5">
+          <div className="space-y-1.5">
             {displayRevisions.map((revision, idx) => (
               <RevisionItem
                 index={idx}
@@ -75,7 +77,7 @@ export default async function RevisionCard({
                 }
               />
             ))}
-          </ScrollArea>
+          </div>
         ) : (
           <NoRevisionsLeft />
         )}

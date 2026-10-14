@@ -19,9 +19,9 @@ export default function AddImportantDateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <CalendarPlus className="mr-2 h-4 w-4" />
-          Add Date
+        <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-lg text-xs">
+          <CalendarPlus className="size-3.5" />
+          Add date
         </Button>
       </DialogTrigger>
 

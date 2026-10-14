@@ -3,7 +3,6 @@
 import { completeRevisionAction } from "@/src/actions/revision.action";
 import { useState, useTransition } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Link2, Flame } from "lucide-react";
 import CompleteRevisionDialog from "../../complete-revision-dialog";
 import { toast } from "sonner";
@@ -45,53 +44,53 @@ export default function RevisionItem({
 
   return (
     <div
-      className={`group relative flex items-start gap-3.5 rounded-xl border p-4 transition-all duration-200 ${
+      className={`group flex items-center gap-3.5 rounded-xl border px-3.5 py-3 transition-colors ${
         isPriorityTarget
-          ? "border-orange-500/60 dark:border-orange-500/50 bg-orange-500/5 dark:bg-orange-950/20 shadow-xs hover:border-orange-500 hover:bg-orange-500/10"
-          : "border-border/70 bg-card/50 hover:bg-muted/40 hover:border-border"
+          ? "border-orange-500/25 bg-orange-500/4 hover:bg-orange-500/8"
+          : "border-transparent hover:bg-muted/50"
       }`}
     >
       <CompleteRevisionDialog onConfirm={handleComplete}>
-        <div className="pt-0.5 cursor-pointer">
+        <div className="cursor-pointer">
           <Checkbox
             checked={checked}
             disabled={isPending}
-            className={
+            className={`size-5 rounded-md ${
               isPriorityTarget
-                ? "border-orange-500 data-[state=checked]:bg-orange-500"
-                : "border-emerald-500 data-[state=checked]:bg-emerald-500"
-            }
+                ? "border-orange-500/70 data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500"
+                : "border-muted-foreground/40 data-[state=checked]:border-emerald-500 data-[state=checked]:bg-emerald-500"
+            }`}
           />
         </div>
       </CompleteRevisionDialog>
 
-      <div className="flex-1 min-w-0 space-y-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <h4 className="font-semibold text-foreground text-sm truncate">
-            {title}
-          </h4>
-
-          {isPriorityTarget && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/15 border border-orange-500/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 shrink-0">
-              <Flame className="size-2.5 fill-orange-500" />
-              <span>Target #{index + 1}</span>
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-          <Badge variant="outline" className="text-[11px] font-medium py-0 px-2 border-border/80">
-            {subject}
-          </Badge>
-
+      <div className="min-w-0 flex-1">
+        <h4
+          className={`truncate text-sm font-medium ${
+            checked ? "text-muted-foreground line-through" : "text-foreground"
+          }`}
+        >
+          {title}
+        </h4>
+        <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="truncate">{subject}</span>
           {source && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground/80">
-              <Link2 className="size-3 text-muted-foreground" />
-              <span className="truncate max-w-[180px]">{source}</span>
-            </div>
+            <>
+              <span className="text-muted-foreground/40">•</span>
+              <span className="flex min-w-0 items-center gap-1">
+                <Link2 className="size-3 shrink-0" />
+                <span className="truncate">{source}</span>
+              </span>
+            </>
           )}
         </div>
       </div>
+
+      {isPriorityTarget && (
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
+          <Flame className="size-3 fill-orange-500 text-orange-500" />#{index + 1}
+        </span>
+      )}
     </div>
   );
 }

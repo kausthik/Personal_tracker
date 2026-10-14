@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getRelativeDate } from "@/src/lib/date";
 import {
@@ -50,62 +50,66 @@ export default function ImportantDateItem({
     });
   }
 
+  // Dates come from a date input, i.e. UTC midnight, so format in UTC to show the picked day
+  const day = new Date(date);
+  const month = day.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
+  const dayOfMonth = day.toLocaleDateString("en-US", { day: "numeric", timeZone: "UTC" });
+
   return (
-    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border/70 bg-card/50 p-3.5 transition-all hover:bg-muted/40 hover:border-border">
-      <div className="space-y-1 min-w-0">
-        <h4 className="font-semibold text-foreground text-sm truncate">
-          {title}
-        </h4>
+    <div className="group flex items-center gap-3.5 rounded-xl px-3 py-2.5 transition-colors hover:bg-muted/50">
+      <div
+        className={`flex size-12 shrink-0 flex-col items-center justify-center rounded-xl border ${
+          priority === "HIGH"
+            ? "border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-400"
+            : "border-border/70 bg-muted/40 text-foreground"
+        }`}
+      >
+        <span className="text-[10px] font-semibold uppercase leading-none tracking-wide opacity-80">
+          {month}
+        </span>
+        <span className="text-lg font-bold leading-tight tabular-nums">{dayOfMonth}</span>
+      </div>
 
-        {description && (
-          <p className="text-xs text-muted-foreground line-clamp-1">
-            {description}
-          </p>
-        )}
-
-        <div className="flex items-center gap-1.5 pt-0.5">
-          <Badge variant="outline" className="text-[11px] font-medium py-0 px-2 border-border/80">
-            {category}
-          </Badge>
-
+      <div className="min-w-0 flex-1">
+        <h4 className="truncate text-sm font-medium text-foreground">{title}</h4>
+        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <span className="font-medium text-foreground/80">{getRelativeDate(day)}</span>
+          <span className="text-muted-foreground/40">•</span>
+          <span className="truncate capitalize">{category.toLowerCase()}</span>
           <Badge
             variant="outline"
-            className={`text-[11px] font-semibold py-0 px-2 ${priorityStyles[priority] || priorityStyles.MEDIUM}`}
+            className={`ml-0.5 h-4 px-1.5 text-[10px] font-semibold ${priorityStyles[priority] || priorityStyles.MEDIUM}`}
           >
             {priority}
           </Badge>
         </div>
+        {description && (
+          <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground/80">{description}</p>
+        )}
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-border/40">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-          <CalendarDays className="size-3.5 text-orange-500" />
-          <span>{getRelativeDate(new Date(date))}</span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <EditImportantDateDialog
-            importantDate={{
-              id,
-              title,
-              description,
-              category,
-              priority,
-              date,
-            }}
-          />
-
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled={isPending}
-            onClick={handleDelete}
-            className="size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            title="Delete date"
-          >
-            <Trash2 className="size-3.5" />
-          </Button>
-        </div>
+      <div className="flex shrink-0 items-center opacity-60 transition-opacity group-hover:opacity-100">
+        <EditImportantDateDialog
+          importantDate={{
+            id,
+            title,
+            description,
+            category,
+            priority,
+            date,
+          }}
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          disabled={isPending}
+          onClick={handleDelete}
+          className="size-8 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          title="Delete date"
+          aria-label={`Delete ${title}`}
+        >
+          <Trash2 className="size-3.5" />
+        </Button>
       </div>
     </div>
   );

@@ -1,54 +1,62 @@
 import { getUserPlannersAction } from "@/src/actions/planner.action";
 import PlannerCard from "@/src/components/study-tracker/planner/planner-card";
 import PlannerHeader from "@/src/components/study-tracker/planner/planner-header";
-import { Compass } from "lucide-react";
+import { Map as MapIcon } from "lucide-react";
+import { daysUntil } from "@/src/lib/date";
 
 export default async function PlannerPage() {
   const planners = await getUserPlannersAction();
 
-  return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-background text-foreground pb-12 overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/10 via-blue-500/5 to-transparent blur-3xl" />
-      <div className="pointer-events-none absolute top-1/4 -right-48 -z-10 h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl" />
+  const completed = planners.filter(
+    (p) => p.totalTasks > 0 && p.completedTasks >= p.totalTasks
+  ).length;
+  const overdue = planners.filter(
+    (p) => p.completedTasks < p.totalTasks && daysUntil(new Date(p.dueDate)) < 0
+  ).length;
+  const avgProgress = planners.length
+    ? Math.round(
+        planners.reduce(
+          (sum, p) => sum + (p.totalTasks > 0 ? p.completedTasks / p.totalTasks : 0),
+          0
+        ) * (100 / planners.length)
+      )
+    : 0;
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-        <PlannerHeader />
+  return (
+    <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 text-foreground">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+        <PlannerHeader
+          summary={[
+            { label: "Active", value: planners.length - completed },
+            { label: "Completed", value: completed },
+            { label: "Overdue", value: overdue, highlight: overdue > 0 },
+            { label: "Avg. progress", value: `${avgProgress}%` },
+          ]}
+        />
 
         {planners.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center p-12 min-h-[340px] rounded-2xl border border-dashed border-border/80 bg-card/40 space-y-3">
-            <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Compass className="size-7" />
+          <div className="flex min-h-72 flex-col items-center justify-center space-y-3 rounded-2xl border border-dashed border-border/70 bg-muted/20 p-12 text-center">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <MapIcon className="size-6" />
             </div>
-            <h3 className="text-lg font-bold">No study roadmaps yet</h3>
-            <p className="text-xs text-muted-foreground max-w-sm">
-              Create your first study planner or roadmap (e.g., Striver A2Z DSA, Operating Systems) using the button above.
+            <h3 className="text-base font-semibold">No study roadmaps yet</h3>
+            <p className="max-w-sm text-xs text-muted-foreground">
+              Create your first roadmap, such as Striver A2Z DSA or Operating Systems, with the button above.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {planners.map((planner) => {
-              const progress =
-                planner.totalTasks > 0
-                  ? Math.round(
-                      (planner.completedTasks / planner.totalTasks) * 100
-                    )
-                  : 0;
-
-              return (
-                <PlannerCard
-                  key={planner._id}
-                  id={planner._id}
-                  title={planner.title}
-                  image={planner.imageUrl ?? "/planner.jpg"}
-                  progress={progress}
-                  completed={planner.completedTasks}
-                  total={planner.totalTasks}
-                  dueDate={new Date(planner.dueDate).toLocaleDateString()}
-                  status={progress === 100 ? "Completed" : "In Progress"}
-                />
-              );
-            })}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {planners.map((planner) => (
+              <PlannerCard
+                key={planner._id}
+                id={planner._id}
+                title={planner.title}
+                image={planner.imageUrl || "/planner.png"}
+                completed={planner.completedTasks}
+                total={planner.totalTasks}
+                dueDate={new Date(planner.dueDate).toISOString()}
+              />
+            ))}
           </div>
         )}
       </div>

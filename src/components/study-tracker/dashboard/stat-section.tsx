@@ -45,19 +45,19 @@ export default async function StatsSection() {
       value: dashboardStats.overdueRevisions,
       description: dashboardStats.overdueRevisions > 0 ? "Requires review" : "Up to date",
       icon: ClockAlert,
-      variant: "orange",
+      variant: dashboardStats.overdueRevisions > 0 ? "orange" : "neutral",
     },
     {
       title: "Overdue Planners",
       value: dashboardStats.overduePlanners,
       description: dashboardStats.overduePlanners > 0 ? "Past target due date" : "On schedule",
       icon: CalendarClock,
-      variant: "orange",
+      variant: dashboardStats.overduePlanners > 0 ? "orange" : "neutral",
     },
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+    <section className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 shadow-xs sm:grid-cols-2 lg:grid-cols-5 [&>*]:bg-card sm:[&>*:last-child]:col-span-2 lg:[&>*:last-child]:col-span-1">
       {stats.map((stat) => (
         <StatCard key={stat.title} {...stat} />
       ))}
