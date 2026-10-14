@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { categories, CategoryConfig } from "@/src/config/category-data";
-import { ArrowLeft, Users, Search } from "lucide-react";
+import { Search, Users } from "lucide-react";
 
 interface LeaderboardHeaderProps {
-  category: string;
+  category: CategoryConfig;
   totalContenders: number;
   searchQuery: string;
   onSearchChange: (value: string) => void;
-  currentCategoryConfig: CategoryConfig;
 }
 
 export function LeaderboardHeader({
@@ -15,82 +14,59 @@ export function LeaderboardHeader({
   totalContenders,
   searchQuery,
   onSearchChange,
-  currentCategoryConfig,
 }: LeaderboardHeaderProps) {
   return (
-    <div className="space-y-4">
-      {/* Top Nav: Back Link + Contenders Count */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/leaderboard"
-          className="group inline-flex items-center gap-2 rounded-xl border border-border/80 bg-card/60 px-3.5 py-2 text-xs font-semibold text-muted-foreground shadow-xs backdrop-blur-md transition-all hover:bg-card hover:text-foreground"
-        >
-          <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Categories</span>
-        </Link>
+    <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-card shadow-xs">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-500" />
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-xs">
-            <Users className="size-3.5 text-primary" />
-            <span>{totalContenders} Contenders</span>
-          </span>
+      <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
+        <div className="space-y-2">
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <Users className="size-3.5" />
+            LeetCode cohort · {totalContenders}
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Leaderboard</h1>
+          <p className="max-w-xl text-sm text-muted-foreground">{category.desc}</p>
+        </div>
+
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="search"
+            placeholder="Find a username"
+            aria-label="Filter by username"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-10 w-full rounded-xl border border-border/80 bg-background pr-4 pl-9 text-sm transition-shadow placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/50 focus:outline-none"
+          />
         </div>
       </div>
 
-      {/* Category Switcher Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      <nav
+        aria-label="Leaderboard categories"
+        className="flex gap-1 overflow-x-auto border-t border-border/60 px-4 py-2.5 sm:px-6"
+      >
         {categories.map((cat) => {
-          const isActive =
-            cat.slug === category ||
-            (category === "contest" && cat.slug === "rating") ||
-            (category === "total" && cat.slug === "total");
+          const isActive = cat.slug === category.slug;
+          const Icon = cat.icon;
 
           return (
             <Link
               key={cat.slug}
               href={`/leaderboard/${cat.slug}`}
-              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              aria-current={isActive ? "page" : undefined}
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-xs"
-                  : "border border-border/60 bg-card/50 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              <span>{cat.icon}</span>
-              <span>{cat.name.replace(" Problems", "")}</span>
+              <Icon className="size-3.5" />
+              {cat.tab}
             </Link>
           );
         })}
-      </div>
-
-      {/* Main Title Banner & Search */}
-      <div className="rounded-2xl border border-border/70 bg-card/70 p-6 backdrop-blur-xl shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-xs font-semibold text-primary">
-              <span>{currentCategoryConfig.icon}</span>
-              <span>{currentCategoryConfig.badge}</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              {currentCategoryConfig.name} Leaderboard
-            </h1>
-            <p className="text-sm text-muted-foreground max-w-xl">
-              {currentCategoryConfig.desc}
-            </p>
-          </div>
-
-          {/* Instant Search Bar */}
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Filter username..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full rounded-xl border border-border/80 bg-background/80 pl-9 pr-4 py-2 text-sm placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+      </nav>
+    </section>
   );
 }

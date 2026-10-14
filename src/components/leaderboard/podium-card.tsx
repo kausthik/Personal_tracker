@@ -1,105 +1,89 @@
 import { User } from "@/src/lib/user-type";
-import { ExternalLink } from "lucide-react";
+import { Crown } from "lucide-react";
+import { DifficultyBar } from "./difficulty-bar";
+import { initials, profileUrl } from "./leaderboard-utils";
 
 interface PodiumCardProps {
   rank: number;
   user: User;
-  medal: string;
-  color: string;
-  border: string;
-  glow: string;
-  title: string;
-  diffText?: string;
   score: number;
+  gap: number; // behind the place above
   scoreLabel: string;
 }
 
-export function PodiumCard({
-  rank,
-  user,
-  medal,
-  color,
-  border,
-  glow,
-  title,
-  diffText,
-  score,
-  scoreLabel,
-}: PodiumCardProps) {
+const medals: Record<number, { ring: string; badge: string; accent: string; label: string }> = {
+  1: {
+    ring: "ring-amber-400",
+    badge: "bg-amber-400 text-amber-950",
+    accent: "bg-amber-400",
+    label: "1st",
+  },
+  2: {
+    ring: "ring-zinc-300 dark:ring-zinc-500",
+    badge: "bg-zinc-300 text-zinc-900",
+    accent: "bg-zinc-300 dark:bg-zinc-500",
+    label: "2nd",
+  },
+  3: {
+    ring: "ring-orange-700/70",
+    badge: "bg-orange-700 text-white",
+    accent: "bg-orange-700/70",
+    label: "3rd",
+  },
+};
+
+export function PodiumCard({ rank, user, score, gap, scoreLabel }: PodiumCardProps) {
+  const medal = medals[rank];
   const isLeader = rank === 1;
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-between overflow-hidden rounded-2xl border ${border} bg-card/80 p-6 backdrop-blur-xl transition-all duration-300 ${glow} ${
-        isLeader
-          ? "md:-order-none order-first md:py-8 bg-gradient-to-b from-amber-500/10 via-card/90 to-card"
-          : "py-6"
+      className={`relative flex flex-col items-center overflow-hidden rounded-2xl border border-border/70 bg-card px-5 text-center shadow-xs ${
+        isLeader ? "order-first pt-8 pb-6 md:order-none md:pt-10 md:pb-8" : "pt-6 pb-5"
       }`}
     >
-      {/* Header: Title & Medal */}
-      <div className="flex w-full items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          {title}
-        </span>
-        <span className="text-2xl" aria-hidden="true">
-          {medal}
-        </span>
-      </div>
+      <div className={`absolute inset-x-0 top-0 h-1 ${medal.accent}`} />
+      {isLeader && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-amber-400/10 to-transparent" />
+      )}
 
-      {/* Contender Details */}
-      <div className="my-4 flex flex-col items-center text-center space-y-2">
-        {/* Avatar Initials Badge */}
-        <div
-          className={`flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-white font-black text-lg shadow-md ring-4 ring-background`}
-        >
-          {user.username.slice(0, 2).toUpperCase()}
-        </div>
-
-        <div className="space-y-0.5">
-          <a
-            href={`https://leetcode.com/u/${user.username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-1.5 text-base font-bold text-foreground hover:text-primary transition-colors"
-          >
-            <span>{user.username}</span>
-            <ExternalLink className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
-          </a>
-          <p className="text-xs text-muted-foreground">Rank #{rank}</p>
-        </div>
-
-        {/* Main Score Display */}
-        <div className="pt-1">
-          <div className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
-            {score}
-          </div>
-          <p className="text-xs font-semibold text-muted-foreground">
-            {scoreLabel}
-          </p>
-        </div>
-
-        {/* Gap Tag */}
-        {diffText && (
-          <span className="inline-flex items-center rounded-full bg-muted/60 border border-border/60 px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-            {diffText}
-          </span>
+      <div className="relative">
+        {isLeader && (
+          <Crown className="absolute -top-5 left-1/2 size-5 -translate-x-1/2 fill-amber-400 text-amber-500" />
         )}
+        <div
+          className={`flex items-center justify-center rounded-full bg-muted font-bold ring-4 ring-offset-2 ring-offset-card ${medal.ring} ${
+            isLeader ? "size-16 text-lg" : "size-14 text-base"
+          }`}
+        >
+          {initials(user.username)}
+        </div>
+        <span
+          className={`absolute -right-1 -bottom-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${medal.badge}`}
+        >
+          {medal.label}
+        </span>
       </div>
 
-      {/* Breakdown Chips */}
-      <div className="w-full pt-3 border-t border-border/50 grid grid-cols-3 gap-1.5 text-center text-xs">
-        <div className="rounded-lg bg-emerald-500/10 p-1 font-semibold text-emerald-600 dark:text-emerald-400">
-          <span className="text-[10px] block opacity-75">Easy</span>
-          {user.easy}
-        </div>
-        <div className="rounded-lg bg-amber-500/10 p-1 font-semibold text-amber-600 dark:text-amber-400">
-          <span className="text-[10px] block opacity-75">Med</span>
-          {user.medium}
-        </div>
-        <div className="rounded-lg bg-rose-500/10 p-1 font-semibold text-rose-600 dark:text-rose-400">
-          <span className="text-[10px] block opacity-75">Hard</span>
-          {user.hard}
-        </div>
+      <a
+        href={profileUrl(user.username)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 max-w-full truncate text-sm font-semibold hover:underline"
+      >
+        {user.username}
+      </a>
+
+      <p className={`mt-2 font-bold tabular-nums tracking-tight ${isLeader ? "text-4xl" : "text-3xl"}`}>
+        {score}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {scoreLabel}
+        {gap > 0 && <span> · {gap} behind</span>}
+      </p>
+
+      <div className="mt-5 w-full">
+        <DifficultyBar user={user} showCounts />
       </div>
     </div>
   );
