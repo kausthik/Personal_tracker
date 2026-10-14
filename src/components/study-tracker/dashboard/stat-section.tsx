@@ -7,52 +7,59 @@ import {
 } from "lucide-react";
 
 import { getDashboardStatsAction } from "@/src/actions/stats.action";
-
 import StatCard from "./stat-card";
 
 export default async function StatsSection() {
   const dashboardStats = await getDashboardStatsAction();
 
-  const stats = [
+  const stats: Array<{
+    title: string;
+    value: number | string;
+    description: string;
+    icon: typeof BookOpen;
+    variant: "blue" | "emerald" | "purple" | "amber" | "rose";
+  }> = [
     {
       title: "Topics Studied",
       value: dashboardStats.topicsStudied,
       description: "Across all subjects",
       icon: BookOpen,
+      variant: "blue",
     },
     {
       title: "Topics Revised",
       value: dashboardStats.topicsRevised,
-      description: "Successfully revised",
+      description: "Active recall completed",
       icon: RotateCcw,
+      variant: "emerald",
     },
     {
       title: "Planner Progress",
       value: `${dashboardStats.plannerProgress}%`,
-      description: "Overall completion",
+      description: "Average roadmap completion",
       icon: ListTodo,
+      variant: "purple",
     },
     {
       title: "Overdue Revisions",
       value: dashboardStats.overdueRevisions,
-      description: "Need attention",
+      description: dashboardStats.overdueRevisions > 0 ? "Requires review" : "Up to date",
       icon: ClockAlert,
+      variant: "amber",
     },
     {
       title: "Overdue Planners",
       value: dashboardStats.overduePlanners,
-      description: "Past due date",
+      description: dashboardStats.overduePlanners > 0 ? "Past target due date" : "On schedule",
       icon: CalendarClock,
+      variant: "rose",
     },
   ];
 
   return (
-    <section className="grid gap-5 p-3 mb-5 sm:grid-cols-2 xl:grid-cols-5">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       {stats.map((stat) => (
-        <StatCard
-          key={stat.title}
-          {...stat}
-        />
+        <StatCard key={stat.title} {...stat} />
       ))}
     </section>
   );
