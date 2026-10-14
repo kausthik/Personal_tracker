@@ -22,10 +22,11 @@ type Props = {
   date: string;
 };
 
+// Strictly 3-color palette (Neutral, Green, Orange)
 const priorityStyles = {
-  HIGH: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
-  MEDIUM: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  LOW: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
+  HIGH: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20",
+  MEDIUM: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  LOW: "bg-muted/60 text-muted-foreground border-border/80",
 };
 
 export default function ImportantDateItem({
@@ -63,7 +64,7 @@ export default function ImportantDateItem({
         )}
 
         <div className="flex items-center gap-1.5 pt-0.5">
-          <Badge variant="outline" className="text-[11px] font-medium py-0 px-2">
+          <Badge variant="outline" className="text-[11px] font-medium py-0 px-2 border-border/80">
             {category}
           </Badge>
 
@@ -78,7 +79,7 @@ export default function ImportantDateItem({
 
       <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-border/40">
         <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-          <CalendarDays className="size-3.5 text-primary" />
+          <CalendarDays className="size-3.5 text-orange-500" />
           <span>{getRelativeDate(new Date(date))}</span>
         </div>
 

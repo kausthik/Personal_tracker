@@ -10,7 +10,8 @@ import RevisionItem from "../revision-item";
 import { getTodayRevisions } from "@/src/lib/server/revision";
 import NoRevisionsLeft from "@/components/ui/no-revision-left";
 import { todaysCompletedRevisionCount } from "@/src/actions/revision.action";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Target } from "lucide-react";
+import { DAILY_REVISION_GOAL } from "@/src/lib/revision.utils";
 
 type RevisionCardProps = {
   revisions: Awaited<ReturnType<typeof getTodayRevisions>>;
@@ -20,6 +21,9 @@ export default async function RevisionCard({
   revisions,
 }: RevisionCardProps) {
   const revisionCount = await todaysCompletedRevisionCount();
+
+  // Repository already returns the earliest-scheduled revisions, capped at the daily goal
+  const displayRevisions = revisions.slice(0, DAILY_REVISION_GOAL);
 
   return (
     <Card className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs">
@@ -32,26 +36,33 @@ export default async function RevisionCard({
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg font-bold">Today's Revisions</CardTitle>
-              <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                {revisions.length} Pending
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <Target className="size-3" />
+                <span>{displayRevisions.length} of {DAILY_REVISION_GOAL} Daily Focus</span>
               </span>
             </div>
             <CardDescription className="text-xs">
-              Complete scheduled revisions to reinforce memory retention.
+              Showing top {DAILY_REVISION_GOAL} revisions sorted by earliest scheduled date first.
             </CardDescription>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/40 border border-border/60 rounded-lg px-2.5 py-1.5">
           <span>Completed Today:</span>
-          <span className="font-bold text-foreground">{revisionCount}</span>
+          <span
+            className={`font-bold ${
+              revisionCount >= DAILY_REVISION_GOAL ? "text-orange-500" : "text-emerald-500"
+            }`}
+          >
+            {revisionCount} / {DAILY_REVISION_GOAL}
+          </span>
         </div>
       </CardHeader>
 
       <CardContent className="pt-4">
-        {revisions.length !== 0 ? (
-          <ScrollArea className="h-[420px] pr-3 space-y-2.5">
-            {revisions.map((revision, idx) => (
+        {displayRevisions.length !== 0 ? (
+          <ScrollArea className="max-h-[440px] pr-3 space-y-2.5">
+            {displayRevisions.map((revision, idx) => (
               <RevisionItem
                 index={idx}
                 revisionCount={revisionCount}

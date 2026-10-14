@@ -5,38 +5,26 @@ interface StatCardProps {
   value: number | string;
   description: string;
   icon: LucideIcon;
-  variant?: "blue" | "emerald" | "purple" | "amber" | "rose";
+  variant?: "neutral" | "green" | "orange";
 }
 
 const variantStyles = {
-  blue: {
-    iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white",
-    border: "border-blue-200/60 dark:border-blue-900/40 hover:border-blue-400/60",
-    glow: "group-hover:shadow-[0_0_25px_-5px_rgba(59,130,246,0.25)]",
+  neutral: {
+    iconBg: "bg-muted/70 text-foreground group-hover:bg-foreground group-hover:text-background",
+    border: "border-border/80 hover:border-zinc-400 dark:hover:border-zinc-600",
+    glow: "group-hover:shadow-[0_0_20px_-5px_rgba(255,255,255,0.05)]",
     valueColor: "text-foreground",
   },
-  emerald: {
+  green: {
     iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white",
-    border: "border-emerald-200/60 dark:border-emerald-900/40 hover:border-emerald-400/60",
+    border: "border-emerald-500/20 hover:border-emerald-500/50",
     glow: "group-hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.25)]",
     valueColor: "text-foreground",
   },
-  purple: {
-    iconBg: "bg-violet-500/10 text-violet-600 dark:text-violet-400 group-hover:bg-violet-500 group-hover:text-white",
-    border: "border-violet-200/60 dark:border-violet-900/40 hover:border-violet-400/60",
-    glow: "group-hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.25)]",
-    valueColor: "text-foreground",
-  },
-  amber: {
-    iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white",
-    border: "border-amber-200/60 dark:border-amber-900/40 hover:border-amber-400/60",
-    glow: "group-hover:shadow-[0_0_25px_-5px_rgba(245,158,11,0.25)]",
-    valueColor: "text-foreground",
-  },
-  rose: {
-    iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-500 group-hover:text-white",
-    border: "border-rose-200/60 dark:border-rose-900/40 hover:border-rose-400/60",
-    glow: "group-hover:shadow-[0_0_25px_-5px_rgba(244,63,94,0.25)]",
+  orange: {
+    iconBg: "bg-orange-500/10 text-orange-600 dark:text-orange-400 group-hover:bg-orange-500 group-hover:text-white",
+    border: "border-orange-500/20 hover:border-orange-500/50",
+    glow: "group-hover:shadow-[0_0_25px_-5px_rgba(249,115,22,0.25)]",
     valueColor: "text-foreground",
   },
 };
@@ -46,7 +34,7 @@ export default function StatCard({
   value,
   description,
   icon: Icon,
-  variant = "blue",
+  variant = "neutral",
 }: StatCardProps) {
   const styles = variantStyles[variant];
 

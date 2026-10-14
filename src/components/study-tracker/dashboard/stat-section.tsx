@@ -17,42 +17,42 @@ export default async function StatsSection() {
     value: number | string;
     description: string;
     icon: typeof BookOpen;
-    variant: "blue" | "emerald" | "purple" | "amber" | "rose";
+    variant: "neutral" | "green" | "orange";
   }> = [
     {
       title: "Topics Studied",
       value: dashboardStats.topicsStudied,
       description: "Across all subjects",
       icon: BookOpen,
-      variant: "blue",
+      variant: "green",
     },
     {
       title: "Topics Revised",
       value: dashboardStats.topicsRevised,
       description: "Active recall completed",
       icon: RotateCcw,
-      variant: "emerald",
+      variant: "green",
     },
     {
       title: "Planner Progress",
       value: `${dashboardStats.plannerProgress}%`,
       description: "Average roadmap completion",
       icon: ListTodo,
-      variant: "purple",
+      variant: "neutral",
     },
     {
       title: "Overdue Revisions",
       value: dashboardStats.overdueRevisions,
       description: dashboardStats.overdueRevisions > 0 ? "Requires review" : "Up to date",
       icon: ClockAlert,
-      variant: "amber",
+      variant: "orange",
     },
     {
       title: "Overdue Planners",
       value: dashboardStats.overduePlanners,
       description: dashboardStats.overduePlanners > 0 ? "Past target due date" : "On schedule",
       icon: CalendarClock,
-      variant: "rose",
+      variant: "orange",
     },
   ];
 

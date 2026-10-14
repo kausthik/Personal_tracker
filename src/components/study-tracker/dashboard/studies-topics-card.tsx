@@ -29,14 +29,14 @@ export default function StudiedTopicsCard({
     <Card className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
             <BookOpenCheck className="size-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg font-bold">Studied Topics</CardTitle>
-              <span className="inline-flex items-center rounded-full bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+              <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 {studies.length} Logged
               </span>
             </div>

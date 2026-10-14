@@ -18,19 +18,19 @@ export default async function ImportantDatesCard() {
     <Card className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400">
             <Calendar className="size-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg font-bold">Important Dates</CardTitle>
-              <span className="inline-flex items-center rounded-full bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 text-xs font-semibold text-purple-600 dark:text-purple-400">
+              <span className="inline-flex items-center rounded-full bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:text-orange-400">
                 {dates.length} Upcoming
               </span>
             </div>
             <CardDescription className="text-xs">
-              Upcoming interviews, exams, contests, and deadlines.
+              Upcoming interviews, exams, and target deadlines.
             </CardDescription>
           </div>
         </div>

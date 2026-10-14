@@ -14,10 +14,11 @@ interface StudiedTopicItemProps {
   difficulty: "Easy" | "Medium" | "Hard";
 }
 
+// Strictly 3-color palette (Neutral, Green, Orange)
 const difficultyStyles = {
   Easy: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-  Medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  Hard: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+  Medium: "bg-muted/60 text-muted-foreground border-border/80",
+  Hard: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20",
 };
 
 export default function StudiedTopicItem({
@@ -42,7 +43,7 @@ export default function StudiedTopicItem({
   return (
     <div className="group flex items-center justify-between rounded-xl border border-border/70 bg-card/50 p-3.5 transition-all hover:bg-muted/40 hover:border-border">
       <div className="flex items-center gap-3.5 min-w-0">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
           <BookOpen className="size-4" />
         </div>
 

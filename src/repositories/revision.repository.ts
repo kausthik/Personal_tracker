@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 import { Revision } from "@/src/models/revision.model";
+import { DAILY_REVISION_GOAL } from "@/src/lib/revision.utils";
 import { RevisionRepositoryType } from "@/src/types/revision"
 
 class RevisionRepository {
@@ -64,7 +65,8 @@ class RevisionRepository {
     status: "PENDING",
   })
     .populate("studyId")
-    .sort({ scheduledFor: -1 })
+    .sort({ scheduledFor: 1 })
+    .limit(DAILY_REVISION_GOAL)
     .lean();
 
   return revisions.map((revision) => ({
