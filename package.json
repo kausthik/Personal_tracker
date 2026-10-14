@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dev:leaderboard": "npm --prefix services/leaderboard-service run dev",
+    "build:leaderboard": "npm --prefix services/leaderboard-service run build",
+    "start:leaderboard": "npm --prefix services/leaderboard-service run start"
   },
   "dependencies": {
     "@google/genai": "^2.9.0",

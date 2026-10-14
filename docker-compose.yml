@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  leaderboard-service:
+    build:
+      context: ./services/leaderboard-service
+      dockerfile: Dockerfile
+    container_name: personal-tracker-leaderboard
+    restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - CACHE_TTL_SECONDS=300
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
