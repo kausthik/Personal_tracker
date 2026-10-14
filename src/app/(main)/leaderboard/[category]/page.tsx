@@ -11,7 +11,7 @@ export default async function Page({ params }: { params: { category: string } })
   else if (category === "medium") data = fetchedData.byMedium
   else if (category === "hard") data = fetchedData.byHard
   else if (category === "daily") data = fetchedData.byDaily
-  else if (category === "contest") data = fetchedData.byRating
+  else if (category === "contest" || category === "rating") data = fetchedData.byRating
 
   return <Leaderboard category={category} data = {data}/>
 }

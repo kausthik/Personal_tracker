@@ -1,76 +1,72 @@
-import { User } from "@/src/lib/user-type"
+"use client";
+
+import { useState } from "react";
+import { User } from "@/src/lib/user-type";
+import { categories } from "@/src/config/category-data";
+import { LeaderboardHeader } from "./leaderboard-header";
+import { LeaderboardPodium } from "./leaderboard-podium";
+import { LeaderboardList } from "./leaderboard-list";
+import { getScore, getScoreLabel } from "./leaderboard-utils";
 
 type Props = {
-  category: string
-  data: User[]
-}
+  category: string;
+  data: User[];
+};
 
 export function Leaderboard({ category, data }: Props) {
-  
-  const getScore = (user: User) => {
-    if (category === "easy") return user.easy
-    if (category === "medium") return user.medium
-    if (category === "hard") return user.hard
-    if (category === "daily") return user.daily
-    if (category === "rating") return user.rating
-    return user.total
-  }
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const sortedData = [...data].sort((a, b) => getScore(b) - getScore(a))
+  const currentCategoryConfig =
+    categories.find(
+      (c) => c.slug === category || (category === "contest" && c.slug === "rating")
+    ) || categories[0];
 
-  const topThree = sortedData.slice(0, 3)
-  const others = sortedData.slice(3)
+  const scoreLabel = getScoreLabel(category);
 
+  const sortedData = [...(data || [])].sort(
+    (a, b) => getScore(b, category) - getScore(a, category)
+  );
+
+  const filteredData = sortedData.filter((user) =>
+    user.username.toLowerCase().includes(searchQuery.toLowerCase().trim())
+  );
+
+  const topThree = sortedData.slice(0, 3);
+  const showPodium = searchQuery === "" && topThree.length >= 3;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        🏆 Leaderboard
-      </h1>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-background text-foreground pb-16">
+      {/* Background ambient lighting */}
+      <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-primary/10 via-blue-500/5 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute top-1/4 -right-48 -z-10 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
 
-      <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {topThree.map((user, index) => (
-          <div
-            key={user.username}
-            className="flex flex-col items-center justify-center border rounded-xl p-4 shadow-md bg-white relative"
-          >
-            <div className="text-2xl font-bold">
-              {index === 0 && "🥇"}
-              {index === 1 && "🥈"}
-              {index === 2 && "🥉"}
-            </div>
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+        {/* Header & Controls */}
+        <LeaderboardHeader
+          category={category}
+          totalContenders={sortedData.length}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          currentCategoryConfig={currentCategoryConfig}
+        />
 
-            <p className="font-semibold mt-2">{user.username}</p>
+        {/* Podium for Top 3 */}
+        {showPodium && (
+          <LeaderboardPodium
+            topThree={topThree}
+            category={category}
+            scoreLabel={scoreLabel}
+          />
+        )}
 
-            <p className="text-lg font-bold text-blue-600">
-              {getScore(user)}
-            </p>
-            {
-              (index!=0)? <p className="text-sm absolute top-1 right-2 font-bold"> - {getScore(topThree[index-1]) - getScore(topThree[index])}</p>: <></>
-            }
-          </div>
-        ))}
-      </div>
-
-      <div className="space-y-2">
-        {others.map((user, index) => (
-          <div
-            key={user.username}
-            className="flex justify-between items-center border rounded-xl p-4 hover:bg-gray-100 transition relative"
-          >
-            <div className="font-semibold">
-              #{index + 4} {user.username}
-            </div>
-
-            <div className="text-blue-600 font-bold">
-              {getScore(user)} / {
-              (index==0)? <span className="text-sm font-bold text-taupe-900">-{getScore(topThree[2]) - getScore(others[index])}</span>  : <span className="text-sm font-bold text-taupe-900">-{getScore(others[index-1]) - getScore(others[index])}</span>
-            }
-            </div>
-            
-          </div>
-        ))}
+        {/* Standings Table / List */}
+        <LeaderboardList
+          filteredData={filteredData}
+          category={category}
+          scoreLabel={scoreLabel}
+          searchQuery={searchQuery}
+        />
       </div>
     </div>
-  )
+  );
 }
