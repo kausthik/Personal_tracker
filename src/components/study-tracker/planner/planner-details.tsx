@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
 import PlannerTaskItem from "./planner-task-item";
+import { PlannerTaskStatus } from "@/src/types/planner";
 
 const tasks = [
   {
@@ -54,7 +55,15 @@ export default function PlannerDetails() {
         {tasks.map((task) => (
           <PlannerTaskItem
             key={task.id}
-            {...task}
+            task={{
+              _id: String(task.id),
+              title: task.title,
+              subject: task.subject,
+              difficulty: task.difficulty,
+              status: task.completed
+                ? PlannerTaskStatus.COMPLETED
+                : PlannerTaskStatus.PENDING,
+            }}
           />
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { CreatePlannerInput } from "@/src/zod/planner.schema";
-import plannerRepository from "@/src/repositories/planner.repository";
+import plannerRepository from "../repositories/planner/planner.repository";
 import plannertaskRepository from "../repositories/plannertask.repository";
 
 import studyService from "./study.service";

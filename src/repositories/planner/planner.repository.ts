@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 import { Planner } from "@/src/models/planner.model";
 import { PlannerRepositoryType } from "@/src/types/planner";
-import { PlannerTask } from "../models/plannertask.model";
+import { PlannerTask } from "@/src/models/plannertask.model";
 
 class PlannerRepository {
   // CREATE

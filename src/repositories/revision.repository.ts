@@ -64,7 +64,7 @@ class RevisionRepository {
     status: "PENDING",
   })
     .populate("studyId")
-    .sort({ scheduledFor: 1 })
+    .sort({ scheduledFor: -1 })
     .lean();
 
   return revisions.map((revision) => ({
