@@ -2,25 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Black_Ops_One } from "next/font/google";
-import { Caveat } from "next/font/google";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Personal_tracker",
-  description: "Compete yourself",
+  title: "Personal Tracker",
+  description: "Spaced-revision study tracker, LeetCode leaderboard and calorie log in one place.",
 };
-
-export const blackOps = Black_Ops_One({
-  weight: "400",
-  subsets: ["latin"],
-});
-
-export const caveat = Caveat({
-    weight: "500",
-    subsets: ["latin"],
-})
 
 export default function RootLayout({
   children,
