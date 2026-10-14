@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI!;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
-}
-
 // Global caching to prevent multiple connections during development
 // prevent unlimited connection by hot reloading
 let cached = (global as any).mongoose;
@@ -20,6 +14,12 @@ export const connectDB = async () => {
   }
 
   if (!cached.promise) {
+    // Checked here rather than at import so `next build` works without DB env vars
+    const MONGODB_URI = process.env.MONGODB_URI;
+    if (!MONGODB_URI) {
+      throw new Error('Please define the MONGODB_URI environment variable');
+    }
+
     const opts = {
       bufferCommands: false,
     };
