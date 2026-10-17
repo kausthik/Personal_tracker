@@ -18,14 +18,10 @@ export default async function PlannerPage() {
   const overdue = planners.filter(
     (p) => p.completedTasks < p.totalTasks && daysUntil(new Date(p.dueDate)) < 0
   ).length;
-  const avgProgress = planners.length
-    ? Math.round(
-        planners.reduce(
-          (sum, p) => sum + (p.totalTasks > 0 ? p.completedTasks / p.totalTasks : 0),
-          0
-        ) * (100 / planners.length)
-      )
-    : 0;
+  // Topic-weighted, same as the dashboard's "Planner Progress"
+  const totalTopics = planners.reduce((sum, p) => sum + p.totalTasks, 0);
+  const doneTopics = planners.reduce((sum, p) => sum + p.completedTasks, 0);
+  const avgProgress = totalTopics > 0 ? Math.round((doneTopics / totalTopics) * 100) : 0;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 text-foreground">
