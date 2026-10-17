@@ -82,12 +82,9 @@ export async function deletePlannerAction(
     throw new Error("Unauthorized");
   }
 
-  const planner =
-    await plannerService.deletePlanner(id);
+  await plannerService.deletePlanner(id, session.user.id);
 
   revalidatePath("/study-tracker/planner");
-
-  return planner;
 }
 
 export async function completePlannerTaskAction(

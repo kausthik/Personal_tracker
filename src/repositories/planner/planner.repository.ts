@@ -105,8 +105,10 @@ class PlannerRepository {
   }
 
   // DELETE
+  // shortcut: not a transaction, so a crash between the two calls can leave orphan tasks; wrap in a session if that matters
   async delete(id: string) {
-    return Planner.findByIdAndDelete(id);
+    await PlannerTask.deleteMany({ plannerId: new Types.ObjectId(id) });
+    return Planner.findByIdAndDelete(id).lean();
   }
 
   async findByPlannerId(plannerId: string) {

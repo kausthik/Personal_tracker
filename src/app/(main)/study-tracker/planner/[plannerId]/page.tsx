@@ -10,6 +10,7 @@ import {
   getPlannerTasksAction,
 } from "@/src/actions/planner.action";
 import PlannerTaskItem from "@/src/components/study-tracker/planner/planner-task-item";
+import DeletePlannerButton from "@/src/components/study-tracker/planner/delete-planner-button";
 import ProgressRing from "@/src/components/study-tracker/progress-ring";
 import { plannerRoute } from "@/lib/routes";
 import { daysUntil } from "@/src/lib/date";
@@ -54,13 +55,16 @@ export default async function PlannerPage({ params }: PageProps) {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 text-foreground">
       <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
-        <Link
-          href={plannerRoute}
-          className="group inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-          All roadmaps
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link
+            href={plannerRoute}
+            className="group inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+            All roadmaps
+          </Link>
+          <DeletePlannerButton id={plannerId} title={planner.title} />
+        </div>
 
         {/* Overview */}
         <section className="overflow-hidden rounded-3xl border border-border/70 bg-card shadow-xs">

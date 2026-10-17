@@ -98,8 +98,14 @@ if (
     return plannerRepository.findByUser(userId);
   }
 
-  deletePlanner(id: string) {
-    return plannerRepository.delete(id);
+  async deletePlanner(id: string, userId: string) {
+    const planner = await this.getPlannerById(id);
+
+    if (planner?.userId !== userId) {
+      throw new Error("Planner not found");
+    }
+
+    await plannerRepository.delete(id);
   }
 
   async getPlannerTasks(
