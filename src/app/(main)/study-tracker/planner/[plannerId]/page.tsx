@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/src/lib/auth";
 import { isValidObjectId } from "mongoose";
 import { ArrowLeft, CalendarDays, CheckCircle2, CircleDashed, ListChecks } from "lucide-react";
 
@@ -29,6 +30,9 @@ const formatDate = (date: Date) =>
   });
 
 export default async function PlannerPage({ params }: PageProps) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
   const { plannerId } = await params;
 
   if (!isValidObjectId(plannerId)) notFound();

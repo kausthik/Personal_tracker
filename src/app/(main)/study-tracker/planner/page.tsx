@@ -3,8 +3,13 @@ import PlannerCard from "@/src/components/study-tracker/planner/planner-card";
 import PlannerHeader from "@/src/components/study-tracker/planner/planner-header";
 import { Map as MapIcon } from "lucide-react";
 import { daysUntil } from "@/src/lib/date";
+import { auth } from "@/src/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function PlannerPage() {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
   const planners = await getUserPlannersAction();
 
   const completed = planners.filter(

@@ -6,7 +6,7 @@ export function getScore(user: User, category: string): number {
   if (category === "hard") return user.hard ?? 0;
   if (category === "daily") return user.daily ?? 0;
   if (category === "rating") return user.rating ?? 0;
-  return user.total ?? 0;
+  return user.total ?? 0; // also "weekly", whose total is the per-day rate
 }
 
 export const initials = (username: string) => username.slice(0, 2).toUpperCase();

@@ -1,4 +1,21 @@
 import { getUserData } from "@/src/lib/graphql";
+import { connectDB } from "@/src/lib/mongodb";
+import { computeRates, shiftDateKey, snapshotDateKey, type Snapshot } from "@/src/lib/weekly-rate";
+import LeetCodeSnapshot from "@/src/models/leetcode-snapshot.model";
+
+export const LEADERBOARD_USERS = [
+  "kk_gangwar",
+  "krotrn",
+  "ujjwalsingh9939",
+  "ROUSHAN_RAJ_17",
+  "Harshit_Srivastava_25",
+  "Harshal-03",
+  "Arun_kumar7310",
+  "AyushKumar98",
+  "coder_bhumikaa",
+  "ao55sdaK9Q",
+  "Rishikesh2005",
+];
 
 const LEADERBOARD_SERVICE_URL =
   process.env.LEADERBOARD_SERVICE_URL ||
@@ -32,19 +49,7 @@ export async function getLeaderboard() {
   }
 
   // 2. Resilient in-app fallback if microservice is offline
-  const users = [
-    "kk_gangwar",
-    "krotrn",
-    "ujjwalsingh9939",
-    "ROUSHAN_RAJ_17",
-    "Harshit_Srivastava_25",
-    "Harshal-03",
-    "Arun_kumar7310",
-    "AyushKumar98",
-    "coder_bhumikaa",
-    "ao55sdaK9Q",
-    "Rishikesh2005",
-  ];
+  const users = LEADERBOARD_USERS;
 
   const result = await Promise.all(users.map((u) => getUserData(u)));
 
@@ -63,4 +68,12 @@ export async function getLeaderboard() {
     byRating,
     byDaily,
   };
+}
+
+// Rolling 7-day per-day solve rate, from the nightly snapshots the cron stores
+export async function getWeeklyLeaderboard() {
+  await connectDB();
+  const since = shiftDateKey(snapshotDateKey(), -7);
+  const snapshots = await LeetCodeSnapshot.find({ date: { $gte: since } }).lean<Snapshot[]>();
+  return computeRates(LEADERBOARD_USERS, snapshots);
 }

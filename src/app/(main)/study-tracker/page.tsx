@@ -9,12 +9,15 @@ import { getTodayStudies } from "@/src/lib/server/study";
 import { getStudyActivityHistoryAction } from "@/src/actions/activity.action";
 import { auth } from "@/src/lib/auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { plannerRoute } from "@/lib/routes";
 import { ArrowRight, Map as MapIcon } from "lucide-react";
 
 export default async function Page() {
-  const [session, studies, revisions, activity] = await Promise.all([
-    auth(),
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const [studies, revisions, activity] = await Promise.all([
     getTodayStudies(),
     getTodayRevisions(),
     getStudyActivityHistoryAction(119), // 17 weeks of history

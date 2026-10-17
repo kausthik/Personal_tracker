@@ -5,6 +5,7 @@ import {
   Skull,
   Sparkles,
   Trophy,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -41,6 +42,14 @@ export const categories: CategoryConfig[] = [
     desc: "Submissions made today (UTC day).",
     scoreLabel: "Today",
     icon: CalendarCheck,
+  },
+  {
+    slug: "weekly",
+    name: "This week",
+    tab: "This week",
+    desc: "Average problems solved per day over the last 7 days, overall and per difficulty. Updated nightly at 11:50 PM IST.",
+    scoreLabel: "Per day",
+    icon: TrendingUp,
   },
   {
     slug: "easy",

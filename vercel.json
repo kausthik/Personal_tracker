@@ -1,0 +1,3 @@
+{
+  "crons": [{ "path": "/api/cron/leetcode-snapshot", "schedule": "50 18 * * *" }]
+}
