@@ -2,10 +2,27 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Flame, Trophy } from "lucide-react";
 import ServiceCard from "../components/home/service-card";
 import { servicesData } from "../config/services-data";
+import ProfileLink from "../components/profile/profile-link";
+import { auth } from "../lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
     <main className="relative flex flex-1 flex-col overflow-hidden bg-background text-foreground">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        {session?.user ? (
+          <ProfileLink name={session.user.name} />
+        ) : (
+          <Link
+            href="/login"
+            className="inline-flex h-8 items-center rounded-full border border-border/80 bg-card px-4 text-xs font-medium transition-colors hover:bg-muted"
+          >
+            Log in
+          </Link>
+        )}
+      </div>
+
       {/* Soft backdrop behind the hero */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-to-b from-orange-500/[0.07] via-amber-400/[0.04] to-transparent" />
       <div

@@ -5,6 +5,7 @@ import { plannerRoute } from "@/lib/routes";
 import type { ActivityHistoryResponse, Streak } from "@/src/actions/activity.action";
 import { DAILY_REVISION_GOAL } from "@/src/lib/revision.utils";
 import ProgressRing from "../progress-ring";
+import ProfileLink from "@/src/components/profile/profile-link";
 
 interface DashboardHeaderProps {
   name?: string | null;
@@ -25,13 +26,16 @@ export default function DashboardHeader({ name, activity }: DashboardHeaderProps
       <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="space-y-5">
           <div className="space-y-2">
-            <Link
-              href="/"
-              className="group flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-              Home
-            </Link>
+            <div className="flex items-center justify-between gap-3">
+              <Link
+                href="/"
+                className="group flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+                Home
+              </Link>
+              <ProfileLink name={name} />
+            </div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Today
             </p>

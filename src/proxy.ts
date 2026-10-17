@@ -16,5 +16,6 @@ export const config = {
     "/calorie-tracker/:path*",
     "/foody/:path*",
     "/forget-password",
+    "/profile",
   ],
 };
