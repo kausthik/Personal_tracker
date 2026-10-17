@@ -9,6 +9,9 @@ export interface IUser {
   currentWeightKg?: number;
   targetWeightKg?: number;
   dailyCalorieTarget?: number;
+  passwordChangedAt?: Date;
+  failedLogins?: number;
+  lockUntil?: Date;
   createdAt: Date;
 }
  
@@ -21,6 +24,9 @@ const UserSchema = new Schema<IUser>({
   currentWeightKg: { type: Number },
   targetWeightKg: { type: Number },
   dailyCalorieTarget: { type: Number, default: 2000 },
+  passwordChangedAt: { type: Date },
+  failedLogins: { type: Number, default: 0 },
+  lockUntil: { type: Date },
   createdAt: { type: Date, default: Date.now },
 });
  
