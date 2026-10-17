@@ -51,11 +51,17 @@ class StudyService {
     return studyRepository.findAllOfToday(userId);
   }
 
-  async getStudyById(id: string) {
-    return studyRepository.findById(id);
+  // Returns null for another user's study, same as a missing one
+  async getStudyById(id: string, userId: string) {
+    const study = await studyRepository.findById(id);
+    return study?.userId === userId ? study : null;
   }
 
-  async deleteStudy(id: string) {
+  async deleteStudy(id: string, userId: string) {
+  if (!(await this.getStudyById(id, userId))) {
+    throw new Error("Study not found.");
+  }
+
   await revisionService.deleteByStudyId(id);
 
   return studyRepository.delete(id);

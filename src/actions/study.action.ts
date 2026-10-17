@@ -60,7 +60,7 @@ export async function getStudyByIdAction(id: string) {
     throw new Error("Unauthorized");
   }
 
-  return await studyService.getStudyById(id);
+  return await studyService.getStudyById(id, session.user.id);
 }
 
 export async function deleteStudyAction(id: string) {
@@ -70,7 +70,7 @@ export async function deleteStudyAction(id: string) {
     throw new Error("Unauthorized");
   }
 
-  const study = await studyService.deleteStudy(id);
+  const study = await studyService.deleteStudy(id, session.user.id);
 
   revalidatePath("/study-tracker");
 

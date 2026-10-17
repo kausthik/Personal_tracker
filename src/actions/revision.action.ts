@@ -33,7 +33,7 @@ export async function getRevisionByIdAction(
     throw new Error("Unauthorized");
   }
 
-  return revisionService.getRevisionById(id);
+  return revisionService.getRevisionById(id, session.user.id);
 }
 
 export async function deleteRevisionAction(
@@ -48,7 +48,7 @@ export async function deleteRevisionAction(
   }
 
   const revision =
-    await revisionService.deleteRevision(id);
+    await revisionService.deleteRevision(id, session.user.id);
 
   revalidatePath("/study-tracker");
 
@@ -65,7 +65,7 @@ export async function completeRevisionAction(
   }
 
   const revision =
-    await revisionService.completeRevision(id);
+    await revisionService.completeRevision(id, session.user.id);
 
   revalidatePath("/study-tracker");
 

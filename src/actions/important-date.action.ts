@@ -75,12 +75,12 @@ export async function getImportantDateByIdAction(
     throw new Error("Unauthorized");
   }
 
-  return importantDateService.getImportantDateById(id);
+  return importantDateService.getImportantDateById(id, session.user.id);
 }
 
 export async function updateImportantDateAction(
   id: string,
-  data: Partial<CreateImportantDateInput>
+  data: CreateImportantDateInput
 ) {
   await connectDB();
 
@@ -90,10 +90,15 @@ export async function updateImportantDateAction(
     throw new Error("Unauthorized");
   }
 
+  // Parse so the client can't slip extra fields (e.g. userId) into the update
+  const validatedData =
+    createImportantDateSchema.parse(data);
+
   const updated =
     await importantDateService.updateImportantDate(
       id,
-      data
+      validatedData,
+      session.user.id
     );
 
   revalidatePath("/study-tracker");
@@ -113,7 +118,7 @@ export async function deleteImportantDateAction(
   }
 
   const deleted =
-    await importantDateService.deleteImportantDate(id);
+    await importantDateService.deleteImportantDate(id, session.user.id);
 
   revalidatePath("/study-tracker");
 

@@ -13,8 +13,10 @@ class ImportantDateService {
     });
   }
 
-  getImportantDateById(id: string) {
-    return importantDateRepository.findById(id);
+  // Returns null for another user's date, same as a missing one
+  async getImportantDateById(id: string, userId: string) {
+    const importantDate = await importantDateRepository.findById(id);
+    return importantDate?.userId.toString() === userId ? importantDate : null;
   }
 
   getUpcomingImportantDates(userId: string) {
@@ -25,14 +27,23 @@ class ImportantDateService {
     return importantDateRepository.findPast(userId);
   }
 
-  updateImportantDate(
+  async updateImportantDate(
     id: string,
-    data: Partial<CreateImportantDateInput>
+    data: Partial<CreateImportantDateInput>,
+    userId: string
   ) {
+    if (!(await this.getImportantDateById(id, userId))) {
+      throw new Error("Important date not found.");
+    }
+
     return importantDateRepository.update(id, data);
   }
 
-  deleteImportantDate(id: string) {
+  async deleteImportantDate(id: string, userId: string) {
+    if (!(await this.getImportantDateById(id, userId))) {
+      throw new Error("Important date not found.");
+    }
+
     return importantDateRepository.delete(id);
   }
 }

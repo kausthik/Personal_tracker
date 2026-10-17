@@ -1,5 +1,6 @@
 "use server";
 import { GoogleGenAI, Type } from "@google/genai";
+import { auth } from "@/src/lib/auth";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -42,6 +43,12 @@ const schema = {
 };
 
 export async function analyzeFood(b64Data: string, mime: string) {
+  // Each call spends Gemini quota, so only logged-in users may call it
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
   try {
     const res = await ai.models.generateContent({
       model: "gemini-2.5-flash",

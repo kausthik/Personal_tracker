@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({ currentPassword: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +38,8 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      router.push("/login?reset=true");
+      // Other sessions are logged out by the password change; log this one out too
+      await signOut({ redirectTo: "/login?reset=true" });
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
@@ -49,8 +49,8 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-semibold mb-1">Reset password</h1>
-        <p className="text-sm text-gray-500 mb-6">Enter your email and a new password.</p>
+        <h1 className="text-2xl font-semibold mb-1">Change password</h1>
+        <p className="text-sm text-gray-500 mb-6">Enter your current password and a new one.</p>
 
         {error && (
           <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
@@ -60,13 +60,14 @@ export default function ForgotPasswordPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">Current password</label>
             <input
-              type="email"
+              type="password"
               required
+              autoComplete="current-password"
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              value={form.currentPassword}
+              onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
             />
           </div>
           <div>
@@ -101,9 +102,8 @@ export default function ForgotPasswordPage() {
         </form>
 
         <p className="text-sm text-gray-500 mt-6 text-center">
-          Remembered it?{" "}
-          <Link href="/login" className="text-black font-medium underline">
-            Log in
+          <Link href="/study-tracker" className="text-black font-medium underline">
+            Back
           </Link>
         </p>
       </div>

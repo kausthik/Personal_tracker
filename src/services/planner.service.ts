@@ -49,7 +49,11 @@ class PlannerService {
 ) {
   const task = await plannertaskRepository.findById(taskId);
 
-  if (!task) {
+  const taskPlanner = task
+    ? await plannerRepository.findById(task.plannerId.toString())
+    : null;
+
+  if (!task || taskPlanner?.userId !== userId) {
     throw new Error("Planner task not found.");
   }
   if (task.status === "COMPLETED") {

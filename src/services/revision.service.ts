@@ -8,8 +8,8 @@ class RevisionService {
     return revisionRepository.create(data);
   }
 
-async completeRevision(id: string) {
-  const revision = await revisionRepository.findById(id);
+async completeRevision(id: string, userId: string) {
+  const revision = await this.getRevisionById(id, userId);
 
   if (!revision) {
     throw new Error("Revision not found.");
@@ -45,8 +45,10 @@ async completeRevision(id: string) {
     return revisionRepository.findTodayRevisions(userId);
   }
 
-  async getRevisionById(id: string) {
-    return revisionRepository.findById(id);
+  // Returns null for another user's revision, same as a missing one
+  async getRevisionById(id: string, userId: string) {
+    const revision = await revisionRepository.findById(id);
+    return revision?.userId === userId ? revision : null;
   }
 
   async deleteByStudyId(studyId: string) {
@@ -60,7 +62,11 @@ async completeRevision(id: string) {
     return revisionRepository.update(id, data);
   }
 
-  async deleteRevision(id: string) {
+  async deleteRevision(id: string, userId: string) {
+    if (!(await this.getRevisionById(id, userId))) {
+      throw new Error("Revision not found.");
+    }
+
     return revisionRepository.delete(id);
   }
 
