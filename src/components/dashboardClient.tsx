@@ -104,9 +104,9 @@ export default function DashboardClient({
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <a href="/calorie-tracker/progress" style={{ color: "#888", fontSize: 13, textDecoration: "none" }}>Progress</a>
           <a href="/calorie-tracker/settings" style={{ color: "#888", fontSize: 13, textDecoration: "none" }}>Settings</a>
-          <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#1e1e24", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600 }}>
+          <a href="/profile" title="Profile" aria-label="Profile" style={{ width: 32, height: 32, borderRadius: "50%", background: "#1e1e24", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, color: "inherit", textDecoration: "none" }}>
             {userName.charAt(0).toUpperCase()}
-          </div>
+          </a>
         </div>
       </nav>
 
