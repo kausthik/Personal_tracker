@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { categories, CategoryConfig } from "@/src/config/category-data";
-import { Search, Users } from "lucide-react";
+import { ArrowLeft, Search, Users } from "lucide-react";
 
 interface LeaderboardHeaderProps {
   category: CategoryConfig;
@@ -21,6 +21,13 @@ export function LeaderboardHeader({
 
       <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
         <div className="space-y-2">
+          <Link
+            href="/"
+            className="group flex w-fit items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+            Home
+          </Link>
           <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             <Users className="size-3.5" />
             LeetCode cohort · {totalContenders}
