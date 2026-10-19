@@ -29,7 +29,6 @@ export enum SourceType {
   WEBSITE = "WEBSITE",
   BOOK = "BOOK",
   COURSE = "COURSE",
-  LEETCODE = "LEETCODE",
   NOTES = "NOTES",
   AIMODEL = "AI MODEL"
 }
