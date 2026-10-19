@@ -15,6 +15,7 @@ export enum Subject {
   SOFTWARE_ENGINEERING = "SOFTWARE_ENGINEERING",
   WEB_SECURITY = "WEB_SECURITY",
   CYBER_SECURITY = "CYBER_SECURITY",
+  AI_ML = "AI_ML",
 }
 
 export enum Difficulty {
