@@ -2,7 +2,7 @@ import { Difficulty } from "@/src/types/study";
 
 // Number of revisions a user should complete each day (drives targets, streak colors and the today list)
 export const DAILY_REVISION_GOAL =
-  Number(process.env.REVISION_COUNT) || 5;
+  Number(process.env.REVISION_COUNT) || 4;
 
 
 const REVISION_SCHEDULE = {
