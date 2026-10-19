@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 import { Planner } from "@/src/models/planner.model";
-import { PlannerRepositoryType } from "@/src/types/planner";
+import { PlannerRepositoryType, PlannerTaskStatus } from "@/src/types/planner";
 import { PlannerTask } from "@/src/models/plannertask.model";
 
 class PlannerRepository {
@@ -69,14 +69,18 @@ class PlannerRepository {
     }).lean();
   }
 
-  async incrementCompletedTasks(plannerId: string) {
+  // Recount from tasks instead of $inc so the counter can't drift (and self-heals if it already has)
+  async syncCompletedTasks(plannerId: string) {
+  const completedTasks = await PlannerTask.countDocuments({
+    plannerId: new Types.ObjectId(plannerId),
+    status: PlannerTaskStatus.COMPLETED,
+  });
+
   const planner =
     await Planner.findByIdAndUpdate(
       plannerId,
       {
-        $inc: {
-          completedTasks: 1,
-        },
+        completedTasks,
       },
       {
         new: true,

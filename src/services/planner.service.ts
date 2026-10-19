@@ -56,26 +56,34 @@ class PlannerService {
   if (!task || taskPlanner?.userId !== userId) {
     throw new Error("Planner task not found.");
   }
-  if (task.status === "COMPLETED") {
+  // Claim first so a double submit can't create two studies or double count
+  if (!(await plannertaskRepository.claimPending(taskId))) {
     throw new Error("Task already completed.");
   }
-  const study = await studyService.createStudy(
-    {
-      subject: task.subject,
-      title: task.title,
-      difficulty: task.difficulty,
-      sources,
-    },
-    userId,
-    wantRevision
-  );
-  await plannertaskRepository.completeTask(
+
+  let study;
+  try {
+    study = await studyService.createStudy(
+      {
+        subject: task.subject,
+        title: task.title,
+        difficulty: task.difficulty,
+        sources,
+      },
+      userId,
+      wantRevision
+    );
+  } catch (error) {
+    await plannertaskRepository.setPending(taskId);
+    throw error;
+  }
+  await plannertaskRepository.setStudy(
     taskId,
     study._id
   );
 
   const planner =
-  await plannerRepository.incrementCompletedTasks(
+  await plannerRepository.syncCompletedTasks(
     task.plannerId.toString()
   );
 

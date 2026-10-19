@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 import { PlannerTask } from "@/src/models/plannertask.model";
-import { PlannerTaskRepositoryType } from "@/src/types/planner";
+import { PlannerTaskRepositoryType, PlannerTaskStatus } from "@/src/types/planner";
 
 class PlannerTaskRepository {
 
@@ -66,21 +66,28 @@ class PlannerTaskRepository {
     });
   }
 
-  async completeTask(
+  // Atomic PENDING -> COMPLETED; returns null if another request already completed it
+  async claimPending(taskId: string) {
+  return PlannerTask.findOneAndUpdate(
+    { _id: taskId, status: PlannerTaskStatus.PENDING },
+    { status: PlannerTaskStatus.COMPLETED },
+    { new: true }
+  ).lean();
+}
+
+  async setPending(taskId: string) {
+  return PlannerTask.findByIdAndUpdate(taskId, {
+    status: PlannerTaskStatus.PENDING,
+  });
+}
+
+  async setStudy(
   taskId: string,
   studyId: string
 ) {
-  return PlannerTask.findByIdAndUpdate(
-    taskId,
-    {
-      status: "COMPLETED",
-      studyId: new Types.ObjectId(studyId),
-    },
-    {
-      new: true,
-      runValidators: true,
-    }
-  ).lean();
+  return PlannerTask.findByIdAndUpdate(taskId, {
+    studyId: new Types.ObjectId(studyId),
+  });
 }
 
   // DELETE
