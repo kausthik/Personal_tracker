@@ -21,6 +21,16 @@ import { Separator } from "@/components/ui/separator"
 import { createStudyAction } from "@/src/actions/study.action"
 import { Difficulty, SourceType, Subject } from "@/src/types/study"
 
+const sourceTypeLabels: Record<SourceType, string> = {
+  [SourceType.YOUTUBE]: "YouTube",
+  [SourceType.WEBSITE]: "Website",
+  [SourceType.BOOK]: "Book",
+  [SourceType.COURSE]: "Course",
+  [SourceType.NOTES]: "Notes",
+  [SourceType.AIMODEL]: "AI Model",
+  [SourceType.LEETCODE]: "LeetCode",
+}
+
 export function RegisterStudiedTopic() {
 
   const handleSubmit = async (
@@ -183,7 +193,7 @@ export function RegisterStudiedTopic() {
                 <SelectContent>
                   {Object.values(SourceType).map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type}
+                      {sourceTypeLabels[type]}
                     </SelectItem>
                   ))}
                 </SelectContent>
