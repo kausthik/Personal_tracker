@@ -181,29 +181,11 @@ export function RegisterStudiedTopic() {
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="YOUTUBE">
-                    YouTube
-                  </SelectItem>
-
-                  <SelectItem value="WEBSITE">
-                    Website
-                  </SelectItem>
-
-                  <SelectItem value="BOOK">
-                    Book
-                  </SelectItem>
-
-                  <SelectItem value="COURSE">
-                    Course
-                  </SelectItem>
-
-                  <SelectItem value="NOTES">
-                    Notes
-                  </SelectItem>
-
-                  <SelectItem value="LEETCODE">
-                    LeetCode
-                  </SelectItem>
+                  {Object.values(SourceType).map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </Field>
