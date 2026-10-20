@@ -1,4 +1,5 @@
 import ImportantDatesCard from "@/src/components/important-dates/important-dates-card";
+import TasksCard from "@/src/components/tasks/tasks-card";
 import DashboardHeader from "@/src/components/study-tracker/dashboard/dashboard-header";
 import RevisionCard from "@/src/components/study-tracker/dashboard/revision/revision-card";
 import StatsSection from "@/src/components/study-tracker/dashboard/stat-section";
@@ -39,6 +40,8 @@ export default async function Page() {
           </div>
 
           <div className="space-y-6 lg:col-span-5">
+            <TasksCard />
+
             <ImportantDatesCard />
 
             <Link
