@@ -25,7 +25,7 @@ export function Leaderboard({ category: slug, data }: Props) {
     user,
     rank: i + 1,
     // Points behind the member ranked directly above
-    // Rounded because the weekly board scores are decimals
+    // Rounded because the per-day rate boards score in decimals
     gap: i > 0 ? Math.round((getScore(sorted[i - 1], category.slug) - getScore(user, category.slug)) * 100) / 100 : 0,
   }));
 

@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Leaderboard } from "./leaderboard-template";
-import { getLeaderboard, getWeeklyLeaderboard } from "@/src/lib/getleaderboard";
+import { getLeaderboard, getRateLeaderboard } from "@/src/lib/getleaderboard";
 import { findCategory } from "@/src/config/category-data";
+
+const rateDays: Record<string, number> = { weekly: 7, monthly: 30 };
 
 const boardKey = {
   total: "byTotal",
@@ -18,8 +20,8 @@ export async function LeaderboardBoard({ slug }: { slug: string }) {
   if (!category) notFound();
 
   const data =
-    category.slug === "weekly"
-      ? await getWeeklyLeaderboard()
+    category.slug in rateDays
+      ? await getRateLeaderboard(rateDays[category.slug])
       : (await getLeaderboard())[boardKey[category.slug as keyof typeof boardKey]];
 
   return <Leaderboard category={category.slug} data={data} />;

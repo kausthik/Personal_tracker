@@ -44,7 +44,7 @@ export function shiftDateKey(key: string, days: number) {
 
 const perDay = (delta: number, days: number) => (days > 0 ? Math.round((Math.max(0, delta) / days) * 100) / 100 : 0);
 
-// Per-day solve rate between each user's oldest and newest snapshot (caller passes the last 7 days)
+// Per-day solve rate between each user's oldest and newest snapshot (caller passes the window, e.g. last 7 or 30 days)
 export function computeRates(usernames: string[], snapshots: Snapshot[]) {
   return usernames.map((username) => {
     const mine = snapshots.filter((s) => s.username === username).sort((a, b) => a.date.localeCompare(b.date));

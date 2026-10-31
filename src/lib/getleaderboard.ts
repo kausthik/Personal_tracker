@@ -76,12 +76,12 @@ export async function getLeaderboard() {
   };
 }
 
-// Rolling 7-day per-day solve rate, from the nightly snapshots plus today's live counts
-export async function getWeeklyLeaderboard() {
+// Rolling per-day solve rate over the last `days`, from the nightly snapshots plus today's live counts
+export async function getRateLeaderboard(days: number) {
   await connectDB();
   const today = istDateKey();
   const [snapshots, live] = await Promise.all([
-    LeetCodeSnapshot.find({ date: { $gte: shiftDateKey(today, -7) } }).lean<Snapshot[]>(),
+    LeetCodeSnapshot.find({ date: { $gte: shiftDateKey(today, -days) } }).lean<Snapshot[]>(),
     fetchLiveUsers(),
   ]);
   return computeRates(LEADERBOARD_USERS, withLive(snapshots, live, today));

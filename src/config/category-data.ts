@@ -1,5 +1,6 @@
 import {
   CalendarCheck,
+  CalendarRange,
   Crown,
   Layers,
   Skull,
@@ -39,7 +40,7 @@ export const categories: CategoryConfig[] = [
     slug: "daily",
     name: "Today",
     tab: "Today",
-    desc: "Submissions made today (UTC day).",
+    desc: "New problems solved today (IST), counted from last night's snapshot.",
     scoreLabel: "Today",
     icon: CalendarCheck,
   },
@@ -50,6 +51,14 @@ export const categories: CategoryConfig[] = [
     desc: "Average problems solved per day over the last 7 days, overall and per difficulty. Updated nightly at 11:50 PM IST.",
     scoreLabel: "Per day",
     icon: TrendingUp,
+  },
+  {
+    slug: "monthly",
+    name: "This month",
+    tab: "30 days",
+    desc: "Average problems solved per day over the last 30 days, overall and per difficulty. Updated nightly at 11:50 PM IST.",
+    scoreLabel: "Per day",
+    icon: CalendarRange,
   },
   {
     slug: "easy",
