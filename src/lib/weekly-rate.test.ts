@@ -1,7 +1,7 @@
 // Run: node --test src/lib/weekly-rate.test.ts
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeRates, shiftDateKey, snapshotDateKey } from "./weekly-rate.ts";
+import { computeRates, dailySolved, shiftDateKey, snapshotDateKey, withLive } from "./weekly-rate.ts";
 
 const snap = (date: string, easy: number, medium: number, hard: number) => ({
   username: "a",
@@ -27,4 +27,15 @@ test("date keys: late cron run counts as the previous IST day", () => {
   assert.equal(snapshotDateKey(new Date("2026-10-17T18:20:00Z")), "2026-10-17"); // 23:50 IST
   assert.equal(snapshotDateKey(new Date("2026-10-17T18:55:00Z")), "2026-10-17"); // 00:25 IST next day
   assert.equal(shiftDateKey("2026-10-03", -7), "2026-09-26");
+});
+
+test("live counts replace today's snapshot and skip failed (zero) fetches", () => {
+  const rows = withLive([snap("2026-10-10", 10, 0, 0), snap("2026-10-17", 99, 0, 0)], [{ ...snap("", 17, 0, 0), username: "a" }, { ...snap("", 0, 0, 0), username: "b" }], "2026-10-17");
+  assert.deepEqual(rows.map((r) => [r.username, r.date, r.total]), [["a", "2026-10-10", 10], ["a", "2026-10-17", 17]]);
+  assert.equal(computeRates(["a"], rows)[0].total, 1);
+});
+
+test("daily = live total minus yesterday's snapshot, else calendar count", () => {
+  const live = [{ username: "a", total: 30, daily: 9 }, { username: "x", total: 5, daily: 2 }];
+  assert.deepEqual(dailySolved(live, [snap("2026-10-16", 20, 7, 0)]).map((u) => u.daily), [3, 2]);
 });

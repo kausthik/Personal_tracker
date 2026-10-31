@@ -1,6 +1,6 @@
 import { getUserData } from "@/src/lib/graphql";
 import { connectDB } from "@/src/lib/mongodb";
-import { computeRates, shiftDateKey, snapshotDateKey, type Snapshot } from "@/src/lib/weekly-rate";
+import { computeRates, dailySolved, istDateKey, shiftDateKey, withLive, type Snapshot } from "@/src/lib/weekly-rate";
 import LeetCodeSnapshot from "@/src/models/leetcode-snapshot.model";
 
 export const LEADERBOARD_USERS = [
@@ -21,7 +21,9 @@ const LEADERBOARD_SERVICE_URL =
   process.env.LEADERBOARD_SERVICE_URL ||
   (process.env.NODE_ENV !== "production" ? "http://localhost:4001" : null);
 
-export async function getLeaderboard() {
+type LiveUser = Awaited<ReturnType<typeof getUserData>>;
+
+async function fetchLiveUsers(): Promise<LiveUser[]> {
   // 1. Attempt to fetch from standalone Leaderboard Microservice if URL is configured
   if (LEADERBOARD_SERVICE_URL) {
     try {
@@ -30,17 +32,7 @@ export async function getLeaderboard() {
         signal: AbortSignal.timeout(2500),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          byTotal: data.byTotal,
-          byEasy: data.byEasy,
-          byMedium: data.byMedium,
-          byHard: data.byHard,
-          byRating: data.byRating,
-          byDaily: data.byDaily,
-        };
-      }
+      if (res.ok) return (await res.json()).byTotal;
     } catch {
       console.warn(
         `[Next.js] Leaderboard microservice at ${LEADERBOARD_SERVICE_URL} unavailable, using in-app fallback.`
@@ -49,9 +41,23 @@ export async function getLeaderboard() {
   }
 
   // 2. Resilient in-app fallback if microservice is offline
-  const users = LEADERBOARD_USERS;
+  return Promise.all(LEADERBOARD_USERS.map((u) => getUserData(u)));
+}
 
-  const result = await Promise.all(users.map((u) => getUserData(u)));
+// Swaps the UTC submission count for problems solved since yesterday's snapshot (IST)
+async function withTodaySolved(users: LiveUser[]) {
+  try {
+    await connectDB();
+    const yesterday = await LeetCodeSnapshot.find({ date: shiftDateKey(istDateKey(), -1) }).lean<Snapshot[]>();
+    return dailySolved(users, yesterday);
+  } catch (err) {
+    console.warn("[Next.js] Snapshot lookup failed, daily falls back to submission calendar.", err);
+    return users;
+  }
+}
+
+export async function getLeaderboard() {
+  const result = await withTodaySolved(await fetchLiveUsers());
 
   const byTotal = [...result].sort((a, b) => (b.total as number) - (a.total as number));
   const byEasy = [...result].sort((a, b) => (b.easy as number) - (a.easy as number));
@@ -70,10 +76,13 @@ export async function getLeaderboard() {
   };
 }
 
-// Rolling 7-day per-day solve rate, from the nightly snapshots the cron stores
+// Rolling 7-day per-day solve rate, from the nightly snapshots plus today's live counts
 export async function getWeeklyLeaderboard() {
   await connectDB();
-  const since = shiftDateKey(snapshotDateKey(), -7);
-  const snapshots = await LeetCodeSnapshot.find({ date: { $gte: since } }).lean<Snapshot[]>();
-  return computeRates(LEADERBOARD_USERS, snapshots);
+  const today = istDateKey();
+  const [snapshots, live] = await Promise.all([
+    LeetCodeSnapshot.find({ date: { $gte: shiftDateKey(today, -7) } }).lean<Snapshot[]>(),
+    fetchLiveUsers(),
+  ]);
+  return computeRates(LEADERBOARD_USERS, withLive(snapshots, live, today));
 }

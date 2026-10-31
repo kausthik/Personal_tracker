@@ -11,10 +11,31 @@ export interface Snapshot {
 
 const DAY_MS = 86_400_000;
 
+export function istDateKey(now = new Date()) {
+  return now.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+}
+
 // IST calendar date of the run. Shifted back 1h because Vercel Hobby fires the 23:50 cron
 // anywhere in that hour, which can cross midnight into the next day.
 export function snapshotDateKey(now = new Date()) {
-  return new Date(now.getTime() - 3_600_000).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  return istDateKey(new Date(now.getTime() - 3_600_000));
+}
+
+// Live counts stand in for today's snapshot, so today's solves count before the nightly cron runs
+export function withLive(snapshots: Snapshot[], live: Omit<Snapshot, "date">[], today: string) {
+  return [
+    ...snapshots.filter((s) => s.date < today),
+    // getUserData returns zeros on failure; a zero row would read as a huge drop
+    ...live.filter((u) => u.total > 0).map(({ username, easy, medium, hard, total }) => ({ username, date: today, easy, medium, hard, total })),
+  ];
+}
+
+// Daily = new problems since yesterday's snapshot; users without one keep their calendar count
+export function dailySolved<T extends { username: string; total: number; daily: number }>(live: T[], yesterday: Snapshot[]) {
+  return live.map((u) => {
+    const base = yesterday.find((s) => s.username === u.username);
+    return base && u.total > 0 ? { ...u, daily: Math.max(0, u.total - base.total) } : u;
+  });
 }
 
 export function shiftDateKey(key: string, days: number) {
