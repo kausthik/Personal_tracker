@@ -42,7 +42,7 @@ export function shiftDateKey(key: string, days: number) {
   return new Date(Date.parse(key) + days * DAY_MS).toISOString().slice(0, 10);
 }
 
-const perDay = (delta: number, days: number) => (days > 0 ? Math.round((Math.max(0, delta) / days) * 10) / 10 : 0);
+const perDay = (delta: number, days: number) => (days > 0 ? Math.round((Math.max(0, delta) / days) * 100) / 100 : 0);
 
 // Per-day solve rate between each user's oldest and newest snapshot (caller passes the last 7 days)
 export function computeRates(usernames: string[], snapshots: Snapshot[]) {
