@@ -7,13 +7,15 @@ import { LeaderboardHeader } from "./leaderboard-header";
 import { LeaderboardPodium } from "./leaderboard-podium";
 import { LeaderboardList } from "./leaderboard-list";
 import { getScore } from "./leaderboard-utils";
+import { daysToOvertake } from "@/src/lib/weekly-rate";
 
 type Props = {
   category: string; // slug
   data: User[];
+  rates?: User[]; // per-day rates over the last 7 days
 };
 
-export function Leaderboard({ category: slug, data }: Props) {
+export function Leaderboard({ category: slug, data, rates }: Props) {
   const category = findCategory(slug) ?? categories[0];
   const [searchQuery, setSearchQuery] = useState("");
   const query = searchQuery.toLowerCase().trim();
@@ -21,12 +23,22 @@ export function Leaderboard({ category: slug, data }: Props) {
   const sorted = [...(data || [])].sort(
     (a, b) => getScore(b, category.slug) - getScore(a, category.slug)
   );
+  const rateOf = (u: User) => {
+    const r = rates?.find((r) => r.username === u.username);
+    return r ? getScore(r, category.slug) : 0;
+  };
+  const leader = sorted[0];
   const ranked = sorted.map((user, i) => ({
     user,
     rank: i + 1,
     // Points behind the member ranked directly above
     // Rounded because the per-day rate boards score in decimals
     gap: i > 0 ? Math.round((getScore(sorted[i - 1], category.slug) - getScore(user, category.slug)) * 100) / 100 : 0,
+    // undefined = no estimate (no rates or this is #1), null = won't catch #1 at current pace
+    eta:
+      rates && i > 0
+        ? daysToOvertake(getScore(leader, category.slug), rateOf(leader), getScore(user, category.slug), rateOf(user))
+        : undefined,
   }));
 
   // Ranks stay global while searching
@@ -47,6 +59,7 @@ export function Leaderboard({ category: slug, data }: Props) {
         {showPodium && (
           <LeaderboardPodium
             topThree={ranked.slice(0, 3).map((r) => r.user)}
+            etas={ranked.slice(0, 3).map((r) => r.eta)}
             category={category.slug}
             scoreLabel={category.scoreLabel}
           />

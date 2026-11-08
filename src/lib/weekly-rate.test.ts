@@ -1,7 +1,7 @@
 // Run: node --test src/lib/weekly-rate.test.ts
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeRates, dailySolved, shiftDateKey, snapshotDateKey, withLive } from "./weekly-rate.ts";
+import { computeRates, dailySolved, daysToOvertake, shiftDateKey, snapshotDateKey, withLive } from "./weekly-rate.ts";
 
 const snap = (date: string, easy: number, medium: number, hard: number) => ({
   username: "a",
@@ -38,4 +38,10 @@ test("live counts replace today's snapshot and skip failed (zero) fetches", () =
 test("daily = live total minus yesterday's snapshot, else calendar count", () => {
   const live = [{ username: "a", total: 30, daily: 9 }, { username: "x", total: 5, daily: 2 }];
   assert.deepEqual(dailySolved(live, [snap("2026-10-16", 20, 7, 0)]).map((u) => u.daily), [3, 2]);
+});
+
+test("days to overtake the leader at current rates", () => {
+  assert.equal(daysToOvertake(100, 1, 90, 3), 6); // needs 11 more, closes 2/day
+  assert.equal(daysToOvertake(100, 2, 90, 2), null); // same pace never catches up
+  assert.equal(daysToOvertake(100, 3, 90, 1), null);
 });

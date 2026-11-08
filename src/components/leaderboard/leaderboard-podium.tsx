@@ -6,18 +6,19 @@ interface LeaderboardPodiumProps {
   topThree: User[];
   category: string;
   scoreLabel: string;
+  etas: (number | null | undefined)[];
 }
 
-export function LeaderboardPodium({ topThree, category, scoreLabel }: LeaderboardPodiumProps) {
+export function LeaderboardPodium({ topThree, category, scoreLabel, etas }: LeaderboardPodiumProps) {
   if (topThree.length < 3) return null;
 
   const scores = topThree.map((u) => getScore(u, category));
 
   // Display order on wide screens: 2nd, 1st, 3rd
   const places = [
-    { rank: 2, user: topThree[1], score: scores[1], gap: Math.round((scores[0] - scores[1]) * 100) / 100 },
+    { rank: 2, user: topThree[1], score: scores[1], eta: etas[1], gap: Math.round((scores[0] - scores[1]) * 100) / 100 },
     { rank: 1, user: topThree[0], score: scores[0], gap: 0 },
-    { rank: 3, user: topThree[2], score: scores[2], gap: Math.round((scores[1] - scores[2]) * 100) / 100 },
+    { rank: 3, user: topThree[2], score: scores[2], eta: etas[2], gap: Math.round((scores[1] - scores[2]) * 100) / 100 },
   ];
 
   return (

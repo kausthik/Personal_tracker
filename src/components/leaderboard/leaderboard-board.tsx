@@ -24,5 +24,10 @@ export async function LeaderboardBoard({ slug }: { slug: string }) {
       ? await getRateLeaderboard(rateDays[category.slug])
       : (await getLeaderboard())[boardKey[category.slug as keyof typeof boardKey]];
 
-  return <Leaderboard category={category.slug} data={data} />;
+  // 7-day pace drives the "days to overtake #1" estimate on the count boards
+  const rates = ["total", "easy", "medium", "hard"].includes(category.slug)
+    ? await getRateLeaderboard(7).catch(() => undefined)
+    : undefined;
+
+  return <Leaderboard category={category.slug} data={data} rates={rates} />;
 }

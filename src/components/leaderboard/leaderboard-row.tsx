@@ -1,7 +1,7 @@
 import { User } from "@/src/lib/user-type";
 import { ArrowUpRight } from "lucide-react";
 import { DifficultyBar } from "./difficulty-bar";
-import { initials, profileUrl } from "./leaderboard-utils";
+import { etaLabel, initials, profileUrl } from "./leaderboard-utils";
 
 interface LeaderboardRowProps {
   user: User;
@@ -10,6 +10,7 @@ interface LeaderboardRowProps {
   topScore: number;
   scoreLabel: string;
   gapFromPrevious?: number;
+  eta?: number | null;
 }
 
 const rankStyles: Record<number, string> = {
@@ -25,6 +26,7 @@ export function LeaderboardRow({
   topScore,
   scoreLabel,
   gapFromPrevious,
+  eta,
 }: LeaderboardRowProps) {
   const share = topScore > 0 ? (score / topScore) * 100 : 0;
 
@@ -52,6 +54,7 @@ export function LeaderboardRow({
             <span className="truncate">{user.username}</span>
             <ArrowUpRight className="size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </a>
+          {etaLabel(eta) && <p className="text-[11px] text-muted-foreground">{etaLabel(eta)}</p>}
           {/* Distance to the leader */}
           <div className="mt-1.5 h-1 max-w-48 overflow-hidden rounded-full bg-muted">
             <div className="h-full rounded-full bg-foreground/70" style={{ width: `${share}%` }} />

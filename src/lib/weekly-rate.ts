@@ -63,3 +63,9 @@ export function computeRates(usernames: string[], snapshots: Snapshot[]) {
     };
   });
 }
+
+// Days until a chaser passes the leader if both keep their current per-day rates; null = never at this pace
+export function daysToOvertake(leaderScore: number, leaderRate: number, score: number, rate: number) {
+  const closing = rate - leaderRate;
+  return closing > 0 ? Math.ceil((leaderScore - score + 1) / closing) : null;
+}

@@ -1,7 +1,7 @@
 import { User } from "@/src/lib/user-type";
 import { Crown } from "lucide-react";
 import { DifficultyBar } from "./difficulty-bar";
-import { initials, profileUrl } from "./leaderboard-utils";
+import { etaLabel, initials, profileUrl } from "./leaderboard-utils";
 
 interface PodiumCardProps {
   rank: number;
@@ -9,6 +9,7 @@ interface PodiumCardProps {
   score: number;
   gap: number; // behind the place above
   scoreLabel: string;
+  eta?: number | null;
 }
 
 const medals: Record<number, { ring: string; badge: string; accent: string; label: string }> = {
@@ -32,7 +33,7 @@ const medals: Record<number, { ring: string; badge: string; accent: string; labe
   },
 };
 
-export function PodiumCard({ rank, user, score, gap, scoreLabel }: PodiumCardProps) {
+export function PodiumCard({ rank, user, score, gap, scoreLabel, eta }: PodiumCardProps) {
   const medal = medals[rank];
   const isLeader = rank === 1;
 
@@ -81,6 +82,7 @@ export function PodiumCard({ rank, user, score, gap, scoreLabel }: PodiumCardPro
         {scoreLabel}
         {gap > 0 && <span> · {gap} behind</span>}
       </p>
+      {etaLabel(eta) && <p className="mt-1 text-[11px] text-muted-foreground">{etaLabel(eta)}</p>}
 
       <div className="mt-5 w-full">
         <DifficultyBar user={user} showCounts />

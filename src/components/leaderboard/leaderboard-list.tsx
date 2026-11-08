@@ -4,7 +4,7 @@ import { LeaderboardRow } from "./leaderboard-row";
 import { getScore } from "./leaderboard-utils";
 
 interface LeaderboardListProps {
-  rows: { user: User; rank: number; gap: number }[];
+  rows: { user: User; rank: number; gap: number; eta?: number | null }[];
   category: string;
   scoreLabel: string;
   topScore: number;
@@ -28,7 +28,7 @@ export function LeaderboardList({ rows, category, scoreLabel, topScore }: Leader
         </div>
       ) : (
         <ol className="divide-y divide-border/50">
-          {rows.map(({ user, rank, gap }) => (
+          {rows.map(({ user, rank, gap, eta }) => (
             <LeaderboardRow
               key={user.username}
               user={user}
@@ -37,6 +37,7 @@ export function LeaderboardList({ rows, category, scoreLabel, topScore }: Leader
               topScore={topScore}
               scoreLabel={scoreLabel}
               gapFromPrevious={gap}
+              eta={eta}
             />
           ))}
         </ol>
