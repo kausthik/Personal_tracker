@@ -17,30 +17,9 @@ export const LEADERBOARD_USERS = [
   "Rishikesh2005",
 ];
 
-const LEADERBOARD_SERVICE_URL =
-  process.env.LEADERBOARD_SERVICE_URL ||
-  (process.env.NODE_ENV !== "production" ? "http://localhost:4001" : null);
-
 type LiveUser = Awaited<ReturnType<typeof getUserData>>;
 
 async function fetchLiveUsers(): Promise<LiveUser[]> {
-  // 1. Attempt to fetch from standalone Leaderboard Microservice if URL is configured
-  if (LEADERBOARD_SERVICE_URL) {
-    try {
-      const res = await fetch(`${LEADERBOARD_SERVICE_URL}/api/leaderboard`, {
-        next: { revalidate: 60 },
-        signal: AbortSignal.timeout(2500),
-      });
-
-      if (res.ok) return (await res.json()).byTotal;
-    } catch {
-      console.warn(
-        `[Next.js] Leaderboard microservice at ${LEADERBOARD_SERVICE_URL} unavailable, using in-app fallback.`
-      );
-    }
-  }
-
-  // 2. Resilient in-app fallback if microservice is offline
   return Promise.all(LEADERBOARD_USERS.map((u) => getUserData(u)));
 }
 
